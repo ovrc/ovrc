@@ -1,0 +1,9 @@
+// Parcel includes PostCSS by default.
+
+module.exports = {
+  plugins: [
+    require("tailwindcss"),
+    require("autoprefixer"),
+    require("postcss-nested")
+  ]
+};
