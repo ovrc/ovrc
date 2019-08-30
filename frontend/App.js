@@ -2,6 +2,9 @@ import React from "react";
 import { render } from "react-dom";
 import Login from "./Login";
 import { Provider } from "./AuthContext";
+import * as Constants from "./constants";
+
+var loading_container = document.getElementById("loading");
 
 class App extends React.Component {
   constructor(props) {
@@ -10,8 +13,10 @@ class App extends React.Component {
     this.state = {
       logged_in: false
     };
+  }
 
-    fetch("https://127.0.0.1:8002/auth/check")
+  componentDidMount() {
+    fetch(Constants.API_URL + "/auth/check")
       .then(res => res.json())
       .then(
         result => {
@@ -20,6 +25,8 @@ class App extends React.Component {
               logged_in: true
             });
           }
+
+          loading_container.classList.toggle("fade");
         },
         error => {}
       );
