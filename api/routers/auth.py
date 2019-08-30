@@ -33,3 +33,8 @@ async def auth_token(
     )
 
     return
+
+
+@router.get("/check", tags=["auth"])
+async def auth_check(response: Response):
+    return {"authenticated": True}
