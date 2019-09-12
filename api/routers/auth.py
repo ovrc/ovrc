@@ -1,40 +1,18 @@
-from datetime import timedelta
+import uuid
 
-from fastapi import APIRouter, Depends
-from fastapi.security import OAuth2PasswordRequestForm
+from fastapi import APIRouter, Form
 from starlette.responses import Response
 
-from api.config import JWS_ACCESS_TOKEN_EXPIRE_MINUTES
-from api.helpers.auth import OAuth2PasswordBearerWithCookie, create_access_token
+from api.routers import APIResponseModel
 
 router = APIRouter()
 
-oauth2_scheme = OAuth2PasswordBearerWithCookie(tokenUrl="/auth/token")
 
-
-@router.post("/token", tags=["auth"])
-async def auth_token(
-    response: Response, form_data: OAuth2PasswordRequestForm = Depends()
+@router.post("/login", tags=["auth"])
+async def login(
+    *, response: Response, username: str = Form(...), password: str = Form(...)
 ):
-    username = form_data.username
-    password = form_data.password
+    session_id = str(uuid.uuid4())
+    response.set_cookie(key="session_id", value=session_id, httponly=True, secure=True)
 
-    # Assume user is authenticated via username and password...
-    # Add database checks later.
-
-    access_token_expires = timedelta(minutes=JWS_ACCESS_TOKEN_EXPIRE_MINUTES)
-
-    access_token = create_access_token(
-        data={"sub": username}, expires_delta=access_token_expires
-    ).decode("utf-8")
-
-    response.set_cookie(
-        key="access_token", value=f"Bearer {access_token}", httponly=True, secure=True
-    )
-
-    return
-
-
-@router.get("/check", tags=["auth"])
-async def auth_check(response: Response):
-    return {"authenticated": True}
+    return APIResponseModel()

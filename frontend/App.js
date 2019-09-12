@@ -1,49 +1,43 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { render } from "react-dom";
-import Login from "./Login";
-import AuthContext from "./AuthContext";
-import LayoutContext from "./LayoutContext";
+import { Router } from "@reach/router";
+import UserContext from "./UserContext";
 import * as Constants from "./constants";
-import LoadingScreen from "./LoadingScreen";
+import PrivateRoute from "./PrivateRoute";
+import Loading from "./Loading";
 
-class App extends React.Component {
-  constructor(props) {
-    super(props);
+const App = () => {
+  const [user, setUser] = useState(null);
 
-    this.state = {
-      auth: {
-        logged_in: false
-      },
-      layout: {
-        show_loading: false
-      }
-    };
-  }
-
-  componentDidMount() {
-    fetch(Constants.API_URL + "/auth/check")
-      .then(res => res.json())
-      .then(result => {
-        if (result.authenticated) {
-          this.setState({
-            auth: {
-              logged_in: true
-            }
-          });
-        }
-      });
-  }
-
-  render() {
-    return (
-      <LayoutContext.Provider value={this.state.layout}>
-        <LoadingScreen />
-        <AuthContext.Provider value={this.state.auth}>
-          <Login />
-        </AuthContext.Provider>
-      </LayoutContext.Provider>
-    );
-  }
-}
+  useEffect(() => {
+    // Small time out so the loading page doesn't just flash the screen.
+    const timer = setTimeout(() => {
+      fetch(Constants.API_URL + "/users/me", { credentials: "include" })
+        .then(res => res.json())
+        .then(result => {
+          if (result.status === "success") {
+            setUser(true);
+          } else {
+            setUser(false);
+          }
+        });
+    }, 700);
+    return () => clearTimeout(timer);
+  }, []);
+  return (
+    <UserContext.Provider value={user}>
+      {user === null ? (
+        <Loading />
+      ) : (
+        <Router>
+          <PrivateRoute as={Dashboard} path="/" />
+        </Router>
+      )}
+    </UserContext.Provider>
+  );
+};
+const Dashboard = () => {
+  return "Protected Dashboard!";
+};
 
 render(<App />, document.getElementById("root"));
