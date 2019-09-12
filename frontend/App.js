@@ -21,7 +21,7 @@ const App = () => {
             setUser(false);
           }
         });
-    }, 700);
+    }, 300);
     return () => clearTimeout(timer);
   }, []);
   return (
