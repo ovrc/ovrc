@@ -24,13 +24,15 @@ const App = () => {
     }, 300);
     return () => clearTimeout(timer);
   }, []);
+
   return (
-    <UserContext.Provider value={user}>
+    <UserContext.Provider value={{ user, setUser }}>
       {user === null ? (
         <Loading />
       ) : (
         <Router>
           <PrivateRoute as={Dashboard} path="/" />
+          <Test path="/test" />
         </Router>
       )}
     </UserContext.Provider>
@@ -38,6 +40,10 @@ const App = () => {
 };
 const Dashboard = () => {
   return "Protected Dashboard!";
+};
+
+const Test = () => {
+  return "test";
 };
 
 render(<App />, document.getElementById("root"));

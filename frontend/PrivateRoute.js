@@ -3,7 +3,7 @@ import UserContext from "./UserContext";
 import Login from "./Login";
 
 const PrivateRoute = props => {
-  const user = useContext(UserContext);
+  const { user, _ } = useContext(UserContext);
   let { as: Comp } = props;
 
   return user ? <Comp {...props} /> : <Login />;
