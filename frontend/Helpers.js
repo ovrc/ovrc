@@ -27,7 +27,7 @@ export const api_request = (endpoint, method, params) => {
     }
   })
     .then(res => {
-      return res;
+      return res.data;
     })
     .catch(function(error) {
       console.log(error);

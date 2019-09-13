@@ -10,14 +10,10 @@ const Login = () => {
   const { user, setUser } = useContext(UserContext);
 
   function login() {
-    console.log(username);
-    console.log(password);
-
     api_request("/auth/login", "POST", {
       username: username,
       password: password
     }).then(res => {
-      console.log(res);
       if (res.status === "success") {
         setUser(true);
       } else {
