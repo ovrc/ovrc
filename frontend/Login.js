@@ -3,7 +3,7 @@ import UserContext from "./UserContext";
 import { api_request } from "./Helpers";
 
 const Login = () => {
-  console.log("Login!");
+  console.log("login component");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 

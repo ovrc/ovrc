@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "parcel frontend/index.html",
+    "dev": "parcel frontend/index.html --cert dev/certs/ovrc.test+5.pem --key dev/certs/ovrc.test+5-key.pem",
     "format": "prettier \"frontend/**/*.{js,html}\" --write",
     "lint": "eslint \"frontend/**/*.{js,jsx}\" --quiet",
     "test": "echo \"Error: no test specified\" && exit 1"

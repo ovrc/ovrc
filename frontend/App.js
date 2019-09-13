@@ -8,6 +8,7 @@ import Loading from "./Loading";
 import { api_request } from "./Helpers";
 
 const App = () => {
+  console.log("app component");
   const [user, setUser] = useState(null);
 
   useEffect(() => {

@@ -16,6 +16,7 @@ export const api_request = (endpoint, method, params) => {
   return axios({
     method: method,
     url: url,
+    withCredentials: true,
     headers:
       method === "POST"
         ? { "content-type": "application/x-www-form-urlencoded" }
