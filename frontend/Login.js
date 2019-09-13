@@ -1,5 +1,6 @@
 import React, { useState, useContext } from "react";
 import UserContext from "./UserContext";
+import { api_request } from "./Helpers";
 
 const Login = () => {
   console.log("Login!");
@@ -11,8 +12,18 @@ const Login = () => {
   function login() {
     console.log(username);
     console.log(password);
-    // TODO: Request to validate user.
-    setUser(true);
+
+    api_request("/auth/login", "POST", {
+      username: username,
+      password: password
+    }).then(res => {
+      console.log(res);
+      if (res.status === "success") {
+        setUser(true);
+      } else {
+        setUser(false);
+      }
+    });
   }
 
   return (

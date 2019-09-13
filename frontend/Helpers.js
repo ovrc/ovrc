@@ -1,12 +1,35 @@
 import * as Constants from "./constants";
+import axios from "axios";
+import qs from "qs";
 
-export const api_request = endpoint => {
-  // Function to make requests to the backend API.
-  return fetch(Constants.API_URL + endpoint, { credentials: "include" }).then(
-    res => {
-      if (res.status < 500) {
-        return res.json();
-      }
+export const api_request = (endpoint, method, params) => {
+  if (!method) {
+    method = "GET";
+  }
+
+  if (!params) {
+    params = {};
+  }
+
+  const url = Constants.API_URL + endpoint;
+
+  return axios({
+    method: method,
+    url: url,
+    headers:
+      method === "POST"
+        ? { "content-type": "application/x-www-form-urlencoded" }
+        : null,
+    params: method === "GET" && params ? params : null,
+    data: method === "POST" && params ? qs.stringify(params) : null,
+    validateStatus: function(status) {
+      return status >= 200 && status < 500;
     }
-  );
+  })
+    .then(res => {
+      return res;
+    })
+    .catch(function(error) {
+      console.log(error);
+    });
 };

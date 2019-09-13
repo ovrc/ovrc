@@ -13,7 +13,7 @@ const App = () => {
   useEffect(() => {
     // Small time out so the loading page doesn't just flash the screen.
     const timer = setTimeout(() => {
-      api_request("/users/me").then(res => {
+      api_request("/users/me", "GET").then(res => {
         if (res.status === "success") {
           setUser(true);
         } else {
