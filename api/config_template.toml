@@ -1,0 +1,7 @@
+env = "" # development|production
+
+[webserver]
+port = ":8002"
+cert_file = ""
+key_file =  ""
+allowed_origins = ["https://localhost:1234"]
