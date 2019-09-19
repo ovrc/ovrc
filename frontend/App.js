@@ -4,8 +4,10 @@ import { Router } from "@reach/router";
 import UserContext from "./UserContext";
 
 import PrivateRoute from "./PrivateRoute";
+import Sidebar from "./Sidebar";
 import Loading from "./Loading";
 import { api_request } from "./Helpers";
+import Login from "./Login";
 
 const App = () => {
   console.log("app component");
@@ -25,19 +27,37 @@ const App = () => {
     return () => clearTimeout(timer);
   }, []);
 
+  // When the status of the user is yet to be checked.
+  if (user === null) {
+    return <Loading />;
+  }
+
+  // If user validation failed (not logged in/logged out).
+  if (user === false) {
+    return (
+      <UserContext.Provider value={{ user, setUser }}>
+        <Login />
+      </UserContext.Provider>
+    );
+  }
+
   return (
     <UserContext.Provider value={{ user, setUser }}>
-      {user === null ? (
-        <Loading />
-      ) : (
-        <Router>
-          <PrivateRoute as={Dashboard} path="/" />
-          <Test path="/test" />
-        </Router>
-      )}
+      <div className="columns">
+        <div className="column is-one-fifth">
+          <Sidebar />
+        </div>
+        <div className="column">
+          <Router>
+            <PrivateRoute as={Dashboard} path="/" />
+            <Test path="/test" />
+          </Router>
+        </div>
+      </div>
     </UserContext.Provider>
   );
 };
+
 const Dashboard = () => {
   return "Protected Dashboard!";
 };

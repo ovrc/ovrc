@@ -6,6 +6,7 @@ const Login = () => {
   console.log("login component");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [loginMessage, setLoginMessage] = useState("");
 
   const { user, setUser } = useContext(UserContext);
 
@@ -17,54 +18,59 @@ const Login = () => {
       if (res.status === "success") {
         setUser(true);
       } else {
-        setUser(false);
+        setLoginMessage(res.data.validation);
       }
     });
   }
 
   return (
-    <div id="login_box" className="box">
-      <form
-        onSubmit={e => {
-          e.preventDefault();
-          login();
-        }}
-      >
-        <div className="field">
-          <label className="label">Username</label>
-          <div className="control">
-            <input
-              className="input"
-              type="text"
-              placeholder="Username"
-              required
-              value={username}
-              onChange={e => setUsername(e.target.value)}
-            />
+    <div id="login-container">
+      <div id="login-box" className="box">
+        {loginMessage ? (
+          <div className="notification is-danger"> {loginMessage} </div>
+        ) : null}
+        <form
+          onSubmit={e => {
+            e.preventDefault();
+            login();
+          }}
+        >
+          <div className="field">
+            <label className="label">Username</label>
+            <div className="control">
+              <input
+                className="input"
+                type="text"
+                placeholder="Username"
+                required
+                value={username}
+                onChange={e => setUsername(e.target.value)}
+              />
+            </div>
           </div>
-        </div>
-        <div className="field">
-          <label className="label">Password</label>
-          <div className="control">
-            <input
-              className="input"
-              type="text"
-              placeholder="**************"
-              required
-              value={password}
-              onChange={e => setPassword(e.target.value)}
-            />
+          <div className="field">
+            <label className="label">Password</label>
+            <div className="control">
+              <input
+                className="input"
+                type="text"
+                placeholder="**************"
+                required
+                value={password}
+                onChange={e => setPassword(e.target.value)}
+              />
+            </div>
           </div>
-        </div>
-        <div className="field is-grouped">
-          <div className="control">
-            <button className="button is-link">Submit</button>
+          <div className="field is-grouped">
+            <div className="control">
+              <button className="button is-link">Submit</button>
+            </div>
+            <div className="control">
+              <button className="button is-text">Recover Password?</button>
+            </div>
           </div>
-          <div className="control">
-            <button className="button is-text">Recover Password?</button>
-          </div>
-        </div>
-      </form>
+        </form>
+      </div>
     </div>
   );
 };

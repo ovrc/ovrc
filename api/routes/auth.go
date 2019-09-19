@@ -28,7 +28,7 @@ func (api Resource) AuthLogin(w http.ResponseWriter, r *http.Request) {
 
 	// General error for credential errors, don't want to give too much away (such as incorrect username/password).
 	validationError := map[string]interface{}{
-		"validation": "could not validate credentials",
+		"validation": "Could not validate credentials.",
 	}
 
 	if err != nil && err != sql.ErrNoRows {
