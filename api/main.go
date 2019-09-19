@@ -5,7 +5,10 @@ import (
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
 	"github.com/go-chi/cors"
-	"github.com/joaodlf/jsend"
+	_ "github.com/lib/pq"
+	"github.com/ovrc/ovrc/appcontext"
+	"github.com/ovrc/ovrc/models"
+	"github.com/ovrc/ovrc/routes"
 	"github.com/spf13/viper"
 	"github.com/teamwork/reload"
 	"log"
@@ -31,6 +34,11 @@ func main() {
 		}()
 	}
 
+	db, err := models.NewDB("user=ovrc dbname=ovrc password=ovrc sslmode=disable")
+	if err != nil {
+		log.Fatalln(err)
+	}
+
 	// Web server.
 	r := chi.NewRouter()
 
@@ -51,86 +59,15 @@ func main() {
 	})
 	r.Use(corsMiddleware.Handler)
 
+	ac := appcontext.AppContext{DB: db}
+
 	// Register routes.
-	r.Mount("/auth", authRouter())
-	r.Mount("/users", usersRouter())
+	api := routes.Resource{AppContext: ac}
+	r.Mount("/", api.SetRoutes())
 
 	// Serve over HTTPS.
 	http.ListenAndServeTLS(viper.GetString("webserver.port"),
 		viper.GetString("webserver.cert_file"),
 		viper.GetString("webserver.key_file"),
 		r)
-}
-
-func authRouter() http.Handler {
-	r := chi.NewRouter()
-	r.Post("/login", authLogin)
-	return r
-}
-
-func usersRouter() http.Handler {
-	r := chi.NewRouter()
-	r.Get("/me", usersMe)
-	return r
-}
-
-type AuthLoginForm struct {
-	Username string
-	Password string
-	Errors   map[string]interface{}
-}
-
-func (form *AuthLoginForm) Validate() bool {
-	form.Errors = make(map[string]interface{})
-
-	if form.Username == "" {
-		form.Errors["username"] = "missing"
-	}
-
-	if form.Password == "" {
-		form.Errors["password"] = "missing"
-	}
-
-	return len(form.Errors) == 0
-}
-
-func authLogin(w http.ResponseWriter, r *http.Request) {
-	form := &AuthLoginForm{
-		Username: r.FormValue("username"),
-		Password: r.FormValue("password"),
-	}
-
-	if form.Validate() == false {
-		jsend.Write(w,
-			jsend.Data(form.Errors),
-			jsend.StatusCode(400),
-		)
-		return
-	}
-
-	cookie := &http.Cookie{
-		Name:     "session_id",
-		Value:    "test",
-		Secure:   true,
-		HttpOnly: true,
-		Path:     "/",
-	}
-	http.SetCookie(w, cookie)
-
-	jsend.Write(w)
-}
-
-func usersMe(w http.ResponseWriter, r *http.Request) {
-	_, err := r.Cookie("session_id")
-
-	if err != nil {
-		jsend.Write(w,
-			jsend.StatusCode(400),
-		)
-		return
-	}
-
-	jsend.Write(w,
-		jsend.StatusCode(200),
-	)
 }
