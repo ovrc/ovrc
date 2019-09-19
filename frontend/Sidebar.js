@@ -6,7 +6,7 @@ const Sidebar = () => {
       <p className="menu-label">General</p>
       <ul className="menu-list">
         <li>
-          <a>Dashboard</a>
+          <a className="is-active">Dashboard</a>
         </li>
       </ul>
       <p className="menu-label">Administration</p>

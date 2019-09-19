@@ -8,6 +8,7 @@ import Sidebar from "./Sidebar";
 import Loading from "./Loading";
 import { api_request } from "./Helpers";
 import Login from "./Login";
+import Navbar from "./Navbar";
 
 const App = () => {
   console.log("app component");
@@ -43,15 +44,18 @@ const App = () => {
 
   return (
     <UserContext.Provider value={{ user, setUser }}>
+      <Navbar />
       <div className="columns">
-        <div className="column is-one-fifth">
+        <div className="column is-2 aside">
           <Sidebar />
         </div>
-        <div className="column">
-          <Router>
-            <PrivateRoute as={Dashboard} path="/" />
-            <Test path="/test" />
-          </Router>
+        <div className="column aside">
+          <div className="box">
+            <Router>
+              <PrivateRoute as={Dashboard} path="/" />
+              <Test path="/test" />
+            </Router>
+          </div>
         </div>
       </div>
     </UserContext.Provider>

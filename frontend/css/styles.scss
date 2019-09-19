@@ -1,9 +1,7 @@
-$main-bg: #fff;
-$logged-out-bg: #2c3e50;
+$main-bg:#3f444a;
+$logged-out-bg: #2e3033;
 
-html {
-    background-color: $main-bg;
-}
+
 
 #loading{
     background: $logged-out-bg;
@@ -41,4 +39,8 @@ html {
     width: 100%;
     height: 100%;
     position: absolute;
+}
+
+.aside {
+    padding: 1.5em;
 }
