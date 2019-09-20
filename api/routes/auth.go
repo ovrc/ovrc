@@ -63,8 +63,9 @@ func (api Resource) AuthLogin(w http.ResponseWriter, r *http.Request) {
 	jsend.Write(w)
 }
 
+// AuthLogout effectively logs the user out by "deleting" the session_id cookie.
 func (api Resource) AuthLogout(w http.ResponseWriter, r *http.Request) {
-	// You delete a cookie by setting the MaxAge to 0.
+	// You delete a cookie by setting the expiration to 0.
 	cookie := &http.Cookie{
 		Name:     "session_id",
 		Value:    "",
