@@ -2,6 +2,7 @@ package routes
 
 import (
 	"database/sql"
+	"github.com/google/uuid"
 	"github.com/joaodlf/jsend"
 	"github.com/ovrc/ovrc/validators"
 	"golang.org/x/crypto/bcrypt"
@@ -53,7 +54,7 @@ func (api Resource) AuthLogin(w http.ResponseWriter, r *http.Request) {
 	// This cookie needs to be set as both secure and httpsonly for all the good reasons.
 	cookie := &http.Cookie{
 		Name:     "session_id",
-		Value:    "test",
+		Value:    uuid.New().String(),
 		Secure:   true,
 		HttpOnly: true,
 		Path:     "/",
