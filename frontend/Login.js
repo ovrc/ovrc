@@ -3,7 +3,6 @@ import UserContext from "./UserContext";
 import { api_request } from "./Helpers";
 
 const Login = () => {
-  console.log("login component");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [loginMessage, setLoginMessage] = useState("");
@@ -53,7 +52,7 @@ const Login = () => {
             <div className="control">
               <input
                 className="input"
-                type="text"
+                type="password"
                 placeholder="**************"
                 required
                 value={password}

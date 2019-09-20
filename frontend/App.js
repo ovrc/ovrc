@@ -11,7 +11,6 @@ import Login from "./Login";
 import Navbar from "./Navbar";
 
 const App = () => {
-  console.log("app component");
   const [user, setUser] = useState(null);
 
   useEffect(() => {
