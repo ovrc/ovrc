@@ -1,6 +1,16 @@
 import React from "react";
+import { Link } from "@reach/router";
+import { api_request } from "./Helpers";
 
 const Navbar = () => {
+  function logout() {
+    api_request("/auth/logout", "GET").then(res => {
+      if (res.status === "success") {
+        window.location.replace("../");
+      }
+    });
+  }
+
   return (
     <section className="hero is-dark">
       <div className="hero-head">
@@ -10,9 +20,9 @@ const Navbar = () => {
           aria-label="main navigation"
         >
           <div className="navbar-brand">
-            <a className="navbar-item" href="#">
+            <Link className="navbar-item" to="/">
               ovrc
-            </a>
+            </Link>
 
             <a
               role="button"
@@ -27,14 +37,13 @@ const Navbar = () => {
             </a>
           </div>
 
-          <div id="navbarBasicExample" className="navbar-menu">
+          <div className="navbar-menu">
             <div className="navbar-end">
               <div className="navbar-item">
                 <div className="buttons">
-                  <a className="button is-primary">
-                    <strong>Sign up</strong>
-                  </a>
-                  <a className="button is-light">Log in</a>
+                  <i className="button is-primary" onClick={logout}>
+                    <strong>Logout</strong>
+                  </i>
                 </div>
               </div>
             </div>

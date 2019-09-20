@@ -17,6 +17,7 @@ func (api Resource) SetRoutes() http.Handler {
 
 	r.Route("/auth", func(r chi.Router) {
 		r.Post("/login", api.AuthLogin)
+		r.Get("/logout", api.AuthLogout)
 	})
 
 	r.Route("/users", func(r chi.Router) {

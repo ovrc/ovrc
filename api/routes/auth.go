@@ -6,6 +6,7 @@ import (
 	"github.com/ovrc/ovrc/validators"
 	"golang.org/x/crypto/bcrypt"
 	"net/http"
+	"time"
 )
 
 // AuthLogin performs a user login.
@@ -56,6 +57,21 @@ func (api Resource) AuthLogin(w http.ResponseWriter, r *http.Request) {
 		Secure:   true,
 		HttpOnly: true,
 		Path:     "/",
+	}
+	http.SetCookie(w, cookie)
+
+	jsend.Write(w)
+}
+
+func (api Resource) AuthLogout(w http.ResponseWriter, r *http.Request) {
+	// You delete a cookie by setting the MaxAge to 0.
+	cookie := &http.Cookie{
+		Name:     "session_id",
+		Value:    "",
+		Secure:   true,
+		HttpOnly: true,
+		Path:     "/",
+		Expires:  time.Unix(0, 0),
 	}
 	http.SetCookie(w, cookie)
 
