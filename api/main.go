@@ -1,31 +1,29 @@
 package main
 
 import (
-	"fmt"
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
 	"github.com/go-chi/cors"
+	"github.com/kelseyhightower/envconfig"
 	_ "github.com/lib/pq"
 	"github.com/ovrc/ovrc/appcontext"
 	"github.com/ovrc/ovrc/models"
 	"github.com/ovrc/ovrc/routes"
-	"github.com/spf13/viper"
 	"github.com/teamwork/reload"
 	"log"
 	"net/http"
 )
 
 func main() {
-	// Load config from file.
-	viper.SetConfigName("config")
-	viper.AddConfigPath(".")
-	err := viper.ReadInConfig()
+	var config appcontext.ConfigSpecification
+
+	err := envconfig.Process("ovrc", &config)
 	if err != nil {
-		panic(fmt.Errorf("Fatal error config file: %s \n", err))
+		log.Fatal("config:", err.Error())
 	}
 
 	// Auto reload on build.
-	if viper.GetString("env") == "development" {
+	if config.Env == "development" {
 		go func() {
 			err := reload.Do(log.Printf)
 			if err != nil {
@@ -34,9 +32,9 @@ func main() {
 		}()
 	}
 
-	db, err := models.NewDB("postgresql://ovrc:ovrc@ovrc_db:5432?sslmode=disable")
+	db, err := models.NewDB(config.DBConnection)
 	if err != nil {
-		log.Fatalln(err)
+		log.Fatalln("db:", err)
 	}
 
 	// Web server.
@@ -50,7 +48,7 @@ func main() {
 
 	// CORS middleware so that the frontend can communicate with this API.
 	corsMiddleware := cors.New(cors.Options{
-		AllowedOrigins:   viper.GetStringSlice("webserver.allowed_origins"),
+		AllowedOrigins:   config.WebAllowedOrigins,
 		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 		AllowedHeaders:   []string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token"},
 		ExposedHeaders:   []string{"Link"},
@@ -59,19 +57,19 @@ func main() {
 	})
 	r.Use(corsMiddleware.Handler)
 
-	ac := appcontext.AppContext{DB: db}
+	ac := appcontext.AppContext{DB: db, Config: config}
 
 	// Register routes.
 	api := routes.Resource{AppContext: ac}
 	r.Mount("/", api.SetRoutes())
 
 	// Serve over HTTPS.
-	err = http.ListenAndServeTLS(viper.GetString("webserver.port"),
-		viper.GetString("webserver.cert_file"),
-		viper.GetString("webserver.key_file"),
+	err = http.ListenAndServeTLS(config.WebPort,
+		config.WebCertFile,
+		config.WebKeyFile,
 		r)
 
 	if err != nil {
-		log.Fatalln(err)
+		log.Fatalln("web:", err)
 	}
 }

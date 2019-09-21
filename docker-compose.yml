@@ -5,6 +5,13 @@ services:
     container_name: "ovrc"
     ports:
       - "8002:8002"
+    environment:
+      - "OVRC_ENV=production"
+      - "OVRC_WEB_PORT=:8002"
+      - "OVRC_WEB_CERT_FILE=/dev_certs/ovrc.test+5.pem"
+      - "OVRC_WEB_KEY_FILE=/dev_certs/ovrc.test+5-key.pem"
+      - "OVRC_WEB_ALLOWED_ORIGINS=https://localhost:1234,http://localhost:1234,https://127.0.0.1:1234"
+      - "OVRC_DB_CONNECTION=postgres://ovrc:ovrc@ovrc_db:5432/ovrc?sslmode=disable"
     links:
       - "postgresql:postgresql"
     depends_on:
