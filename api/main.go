@@ -34,7 +34,7 @@ func main() {
 		}()
 	}
 
-	db, err := models.NewDB("user=ovrc dbname=ovrc password=ovrc sslmode=disable")
+	db, err := models.NewDB("postgresql://ovrc:ovrc@ovrc_db:5432?sslmode=disable")
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -66,8 +66,12 @@ func main() {
 	r.Mount("/", api.SetRoutes())
 
 	// Serve over HTTPS.
-	http.ListenAndServeTLS(viper.GetString("webserver.port"),
+	err = http.ListenAndServeTLS(viper.GetString("webserver.port"),
 		viper.GetString("webserver.cert_file"),
 		viper.GetString("webserver.key_file"),
 		r)
+
+	if err != nil {
+		log.Fatalln(err)
+	}
 }

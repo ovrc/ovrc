@@ -9,7 +9,7 @@ ENV GO111MODULE=on
 WORKDIR /app
 COPY api /app
 # TODO: Remove dev certificates for production.
-COPY dev /dev
+COPY dev_certs /dev_certs
 COPY --from=frontend /app/dist ./dist
 RUN GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -o ovrc
 
@@ -17,6 +17,6 @@ FROM alpine:latest
 WORKDIR /app
 COPY --from=binaries /app .
 # TODO: Remove dev certificates for production.
-COPY --from=binaries /dev /dev
+COPY --from=binaries /dev_certs /dev_certs
 EXPOSE 8002
 #CMD ./ovrc

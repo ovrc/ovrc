@@ -1,0 +1,26 @@
+version: "3"
+services:
+  ovrc:
+    image: "ovrc:latest"
+    container_name: "ovrc"
+    ports:
+      - "8002:8002"
+    links:
+      - "postgresql:postgresql"
+    depends_on:
+      - postgresql
+    restart: always
+    stdin_open: true  # Remove
+    tty: true  # Remove
+  postgresql:
+    image: postgres:11
+    container_name: "ovrc_db"
+    ports:
+      - "5432:5432"
+    environment:
+      - "POSTGRES_USER=ovrc"
+      - "POSTGRES_PASSWORD=ovrc"
+    volumes:
+      - dbdata:/var/lib/postgresql/data
+volumes:
+  dbdata:

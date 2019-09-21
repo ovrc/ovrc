@@ -2,6 +2,6 @@ env = "development" # development|production
 
 [webserver]
 port = ":8002"
-cert_file = "../dev/certs/ovrc.test+5.pem"
-key_file =  "../dev/certs/ovrc.test+5-key.pem"
+cert_file = "../dev_certs/ovrc.test+5.pem"
+key_file =  "../dev_certs/ovrc.test+5-key.pem"
 allowed_origins = ["https://localhost:1234", "http://localhost:1234", "https://127.0.0.1:1234"]
