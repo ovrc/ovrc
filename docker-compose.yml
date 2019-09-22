@@ -5,6 +5,7 @@ services:
     container_name: "ovrc"
     ports:
       - "8002:8002"
+      - "1234:1234"
     environment:
       - "OVRC_ENV=production"
       - "OVRC_WEB_PORT=:8002"

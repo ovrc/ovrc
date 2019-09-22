@@ -13,10 +13,12 @@ COPY dev_certs /dev_certs
 COPY --from=frontend /app/dist ./dist
 RUN GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -o ovrc
 
-FROM alpine:latest
+FROM nginx:1.15-alpine
 WORKDIR /app
 COPY --from=binaries /app .
 # TODO: Remove dev certificates for production.
 COPY --from=binaries /dev_certs /dev_certs
+COPY data/nginx/api.conf /etc/nginx/conf.d
 EXPOSE 8002
+EXPOSE 1234
 CMD ./ovrc
