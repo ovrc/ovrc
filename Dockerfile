@@ -19,4 +19,4 @@ COPY --from=binaries /app .
 # TODO: Remove dev certificates for production.
 COPY --from=binaries /dev_certs /dev_certs
 EXPOSE 8002
-#CMD ./ovrc
+CMD ./ovrc

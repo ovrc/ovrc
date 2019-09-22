@@ -16,6 +16,8 @@ services:
       - "postgresql:postgresql"
     depends_on:
       - postgresql
+    #healthcheck:
+    #  test: nc -z localhost 5432 # Check if postgres is up and running, doesn't seem to be needed for now?
     restart: always
     stdin_open: true  # Remove
     tty: true  # Remove
