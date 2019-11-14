@@ -8,7 +8,7 @@ require (
 	github.com/google/uuid v1.1.1
 	github.com/jmoiron/sqlx v1.2.0
 	github.com/joaodlf/jsend v0.0.0-20181209111907-72b842f25e4b
-	github.com/kelseyhightower/envconfig v1.4.0 // indirect
+	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/lib/pq v1.0.0
 	github.com/pkg/errors v0.8.0
 	github.com/spf13/viper v1.4.0

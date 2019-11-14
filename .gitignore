@@ -9,3 +9,4 @@ api/vendor/
 api/ovrc
 api/config.toml
 flyway.conf
+.env.production

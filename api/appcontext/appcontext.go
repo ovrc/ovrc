@@ -9,6 +9,7 @@ type AppContext struct {
 
 type ConfigSpecification struct {
 	Env               string
+	UseSSL            string   `envconfig:"USE_SSL"`
 	WebPort           string   `envconfig:"WEB_PORT"`
 	WebCertFile       string   `envconfig:"WEB_CERT_FILE"`
 	WebKeyFile        string   `envconfig:"WEB_KEY_FILE"`

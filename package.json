@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "parcel frontend/index.html --cert dev/certs/ovrc.test+5.pem --key dev/certs/ovrc.test+5-key.pem",
+    "dev": "parcel frontend/index.html",
     "build": "parcel build frontend/index.html",
     "format": "prettier \"frontend/**/*.{js,html}\" --write",
     "lint": "eslint \"frontend/**/*.{js,jsx}\" --quiet",

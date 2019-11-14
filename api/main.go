@@ -63,11 +63,14 @@ func main() {
 	api := routes.Resource{AppContext: ac}
 	r.Mount("/", api.SetRoutes())
 
-	// Serve over HTTPS.
-	err = http.ListenAndServeTLS(config.WebPort,
-		config.WebCertFile,
-		config.WebKeyFile,
-		r)
+	if config.UseSSL == "true" {
+		err = http.ListenAndServeTLS(config.WebPort,
+			config.WebCertFile,
+			config.WebKeyFile,
+			r)
+	} else {
+		err = http.ListenAndServe(config.WebPort, r)
+	}
 
 	if err != nil {
 		log.Fatalln("web:", err)

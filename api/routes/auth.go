@@ -51,11 +51,15 @@ func (api Resource) AuthLogin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// This cookie needs to be set as both secure and httpsonly for all the good reasons.
+	secure := false
+	if api.AppContext.Config.UseSSL == "true" {
+		secure = true
+	}
+
 	cookie := &http.Cookie{
 		Name:     "session_id",
 		Value:    uuid.New().String(),
-		Secure:   true,
+		Secure:   secure,
 		HttpOnly: true,
 		Path:     "/",
 	}
@@ -66,11 +70,16 @@ func (api Resource) AuthLogin(w http.ResponseWriter, r *http.Request) {
 
 // AuthLogout effectively logs the user out by "deleting" the session_id cookie.
 func (api Resource) AuthLogout(w http.ResponseWriter, r *http.Request) {
+	secure := false
+	if api.AppContext.Config.UseSSL == "true" {
+		secure = true
+	}
+
 	// You delete a cookie by setting the expiration to 0.
 	cookie := &http.Cookie{
 		Name:     "session_id",
 		Value:    "",
-		Secure:   true,
+		Secure:   secure,
 		HttpOnly: true,
 		Path:     "/",
 		Expires:  time.Unix(0, 0),
