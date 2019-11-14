@@ -22,7 +22,7 @@ func (api Resource) SetRoutes() http.Handler {
 
 	r.Route("/users", func(r chi.Router) {
 		r.Get("/me", api.UsersMe)
+		r.Get("/", api.Users)
 	})
-
 	return r
 }

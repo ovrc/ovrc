@@ -7,15 +7,13 @@ import (
 
 // UsersMe returns the logged in user details.
 func (api Resource) UsersMe(w http.ResponseWriter, r *http.Request) {
-	_, err := r.Cookie("session_id")
+	// TODO: Check if the user is valid.
+	jsend.Write(w,
+		jsend.StatusCode(200),
+	)
+}
 
-	if err != nil {
-		jsend.Write(w,
-			jsend.StatusCode(400),
-		)
-		return
-	}
-
+func (api Resource) Users(w http.ResponseWriter, r *http.Request) {
 	jsend.Write(w,
 		jsend.StatusCode(200),
 	)

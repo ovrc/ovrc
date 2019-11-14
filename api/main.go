@@ -4,6 +4,7 @@ import (
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
 	"github.com/go-chi/cors"
+	"github.com/joaodlf/jsend"
 	"github.com/kelseyhightower/envconfig"
 	_ "github.com/lib/pq"
 	"github.com/ovrc/ovrc/appcontext"
@@ -13,6 +14,25 @@ import (
 	"log"
 	"net/http"
 )
+
+// SessionCheck is a middleware to check for the session_id before allowing access to the API.
+func SessionCheck(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		// Allow /auth/login through so that the user can actually login.
+		if r.URL.String() != "/auth/login" {
+			_, err := r.Cookie("session_id")
+
+			if err != nil {
+				jsend.Write(w,
+					jsend.StatusCode(403),
+				)
+				return
+			}
+		}
+
+		next.ServeHTTP(w, r)
+	})
+}
 
 func main() {
 	var config appcontext.ConfigSpecification
@@ -56,6 +76,7 @@ func main() {
 		MaxAge:           300,
 	})
 	r.Use(corsMiddleware.Handler)
+	r.Use(SessionCheck)
 
 	ac := appcontext.AppContext{DB: db, Config: config}
 
