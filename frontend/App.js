@@ -9,6 +9,8 @@ import Loading from "./Loading";
 import { api_request } from "./Helpers";
 import Login from "./Login";
 import Navbar from "./Navbar";
+import Dashboard from "./Dashboard";
+import Users from "./Users";
 
 const App = () => {
   const [user, setUser] = useState(null);
@@ -52,21 +54,13 @@ const App = () => {
           <div className="box">
             <Router>
               <PrivateRoute as={Dashboard} path="/" />
-              <Test path="/test" />
+              <PrivateRoute as={Users} path="/users" />
             </Router>
           </div>
         </div>
       </div>
     </UserContext.Provider>
   );
-};
-
-const Dashboard = () => {
-  return "Protected Dashboard!";
-};
-
-const Test = () => {
-  return "test";
 };
 
 render(<App />, document.getElementById("root"));

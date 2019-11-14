@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "@reach/router";
 
 const Sidebar = () => {
   return (
@@ -6,13 +7,15 @@ const Sidebar = () => {
       <p className="menu-label">General</p>
       <ul className="menu-list">
         <li>
-          <a className="is-active">Dashboard</a>
+          <Link className="is-active" to="/">
+            Dashboard
+          </Link>
         </li>
       </ul>
       <p className="menu-label">Administration</p>
       <ul className="menu-list">
         <li>
-          <a>Users</a>
+          <Link to="users">Users</Link>
         </li>
       </ul>
     </aside>
