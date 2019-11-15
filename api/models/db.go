@@ -10,6 +10,7 @@ import (
 type Datastore interface {
 	SelectUser(username string) (*User, error)
 	UpdateUserSessionID(userID int, sessionID uuid.UUID) error
+	SelectUserBySessionID(sessionID string) (*User, error)
 }
 
 // DB holds a sql db.

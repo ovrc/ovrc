@@ -43,3 +43,15 @@ func (db *DB) UpdateUserSessionID(userID int, sessionID uuid.UUID) error {
 
 	return nil
 }
+
+func (db *DB) SelectUserBySessionID(sessionID string) (*User, error) {
+	user := &User{}
+
+	err := db.Get(user, `SELECT * FROM users WHERE session_id = $1`, sessionID)
+
+	if err != nil {
+		return user, errors.Wrap(err, "")
+	}
+
+	return user, nil
+}

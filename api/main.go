@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
 	"github.com/go-chi/cors"
@@ -16,22 +17,44 @@ import (
 )
 
 // SessionCheck is a middleware to check for the session_id before allowing access to the API.
-func SessionCheck(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		// Allow /auth/login through so that the user can actually login.
-		if r.URL.String() != "/auth/login" {
-			_, err := r.Cookie("session_id")
+func SessionCheck(db *models.DB) func(http.Handler) http.Handler {
+	return func(next http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			// Allow /auth/login through so that the user can actually login.
+			if r.URL.String() == "/auth/login" {
+				next.ServeHTTP(w, r)
+				return
+			}
+
+			sessionID, err := r.Cookie("session_id")
 
 			if err != nil {
 				jsend.Write(w,
 					jsend.StatusCode(403),
+					jsend.Data(map[string]interface{}{
+						"validation": "Missing session_id.",
+					}),
 				)
 				return
 			}
-		}
 
-		next.ServeHTTP(w, r)
-	})
+			user, err := db.SelectUserBySessionID(sessionID.Value)
+
+			if err != nil {
+				jsend.Write(w,
+					jsend.StatusCode(403),
+					jsend.Data(map[string]interface{}{
+						"validation": "Could not validate session_id.",
+					}),
+				)
+				return
+			}
+
+			// Put the user in the current request context.
+			ctx := context.WithValue(r.Context(), "user", user)
+			next.ServeHTTP(w, r.WithContext(ctx))
+		})
+	}
 }
 
 func main() {
@@ -76,7 +99,7 @@ func main() {
 		MaxAge:           300,
 	})
 	r.Use(corsMiddleware.Handler)
-	r.Use(SessionCheck)
+	r.Use(SessionCheck(db))
 
 	ac := appcontext.AppContext{DB: db, Config: config}
 
