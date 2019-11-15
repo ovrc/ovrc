@@ -15,7 +15,7 @@ const Login = () => {
       password: password
     }).then(res => {
       if (res.status === "success") {
-        setUser(true);
+        setUser(res.data);
       } else {
         setLoginMessage(res.data.validation);
       }

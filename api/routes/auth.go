@@ -78,7 +78,9 @@ func (api Resource) AuthLogin(w http.ResponseWriter, r *http.Request) {
 	}
 	http.SetCookie(w, cookie)
 
-	jsend.Write(w)
+	jsend.Write(w, jsend.Data(map[string]interface{}{
+		"username": user.Username,
+	}))
 }
 
 // AuthLogout effectively logs the user out by "deleting" the session_id cookie.

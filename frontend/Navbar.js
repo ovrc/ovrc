@@ -1,6 +1,7 @@
 import React from "react";
 import { Link } from "@reach/router";
 import { api_request } from "./Helpers";
+import UserContext from "./UserContext";
 
 const Navbar = () => {
   function logout() {
@@ -43,6 +44,11 @@ const Navbar = () => {
                 <div className="buttons">
                   <i className="button is-primary" onClick={logout}>
                     <strong>Logout</strong>
+                  </i>
+                  <i className="button is-primary" onClick={logout}>
+                    <UserContext.Consumer>
+                      {context => <strong>{context.user.username}</strong>}
+                    </UserContext.Consumer>
                   </i>
                 </div>
               </div>

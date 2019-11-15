@@ -20,7 +20,7 @@ const App = () => {
     const timer = setTimeout(() => {
       api_request("/users/me", "GET").then(res => {
         if (res.status === "success") {
-          setUser(true);
+          setUser(res.data);
         } else {
           setUser(false);
         }
@@ -44,7 +44,7 @@ const App = () => {
   }
 
   return (
-    <UserContext.Provider value={{ user, setUser }}>
+    <UserContext.Provider value={{ user: user }}>
       <Navbar />
       <div className="columns">
         <div className="column is-2 aside">

@@ -1,26 +1,24 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { api_request } from "./Helpers";
 
 const Users = () => {
-  const [users, setUsers] = useState(null);
+  const [users, setUsers] = useState([]);
 
-  api_request("/users/list", "GET").then(res => {
-    if (res.status === "success") {
-      setUsers(true);
-    } else {
-      setUsers(false);
-    }
-  });
-
-  if (users === null) {
-    return "Loading...";
-  }
+  useEffect(() => {
+    api_request("/users", "GET").then(res => {
+      if (res.status === "success") {
+        setUsers(true);
+      } else {
+        setUsers(false);
+      }
+    });
+  }, []);
 
   if (users === true) {
     return "User list!";
   }
 
-  return "Users!";
+  return "Loading...";
 };
 
 export default Users;
