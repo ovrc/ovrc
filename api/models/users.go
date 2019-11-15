@@ -55,3 +55,15 @@ func (db *DB) SelectUserBySessionID(sessionID string) (*User, error) {
 
 	return user, nil
 }
+
+func (db *DB) SelectUsersForAdmin() ([]User, error) {
+	var users []User
+
+	err := db.Select(&users, `SELECT username, dt_created FROM users`)
+
+	if err != nil {
+		return users, errors.Wrap(err, "")
+	}
+
+	return users, nil
+}
