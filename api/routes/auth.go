@@ -51,6 +51,18 @@ func (api Resource) AuthLogin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	sessionID := uuid.New()
+
+	err = db.UpdateUserSessionID(user.ID, sessionID)
+
+	if err != nil {
+		jsend.Write(w,
+			jsend.StatusCode(500),
+			jsend.Message(err.Error()),
+		)
+		return
+	}
+
 	secure := false
 	if api.AppContext.Config.UseSSL == "true" {
 		secure = true
@@ -58,7 +70,7 @@ func (api Resource) AuthLogin(w http.ResponseWriter, r *http.Request) {
 
 	cookie := &http.Cookie{
 		Name:     "session_id",
-		Value:    uuid.New().String(),
+		Value:    sessionID.String(),
 		Secure:   secure,
 		SameSite: http.SameSiteLaxMode,
 		HttpOnly: true,

@@ -84,6 +84,7 @@ func main() {
 	api := routes.Resource{AppContext: ac}
 	r.Mount("/", api.SetRoutes())
 
+	// Not currently in use - but something to grow from in the future.
 	if config.UseSSL == "true" {
 		err = http.ListenAndServeTLS(config.WebPort,
 			config.WebCertFile,

@@ -1,6 +1,7 @@
 package models
 
 import (
+	"github.com/google/uuid"
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
 )
@@ -8,6 +9,7 @@ import (
 // Datastore represents all the queries.
 type Datastore interface {
 	SelectUser(username string) (*User, error)
+	UpdateUserSessionID(userID int, sessionID uuid.UUID) error
 }
 
 // DB holds a sql db.

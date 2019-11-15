@@ -1,6 +1,7 @@
 package models
 
 import (
+	"github.com/google/uuid"
 	"github.com/lib/pq"
 	"github.com/pkg/errors"
 	"time"
@@ -8,11 +9,12 @@ import (
 
 // User represents teh users db table.
 type User struct {
-	Id        int         `db:"id"`
+	ID        int         `db:"id"`
 	DtCreated time.Time   `db:"dt_created"`
 	DtUpdated pq.NullTime `db:"dt_updated"`
 	Username  string      `db:"username"`
 	Password  string      `db:"password"`
+	SessionID uuid.UUID   `db:"session_id"`
 }
 
 // SelectUser selects a single user via the username.
@@ -26,4 +28,18 @@ func (db *DB) SelectUser(username string) (*User, error) {
 	}
 
 	return user, nil
+}
+
+func (db *DB) UpdateUserSessionID(userID int, sessionID uuid.UUID) error {
+	_, err := db.NamedExec(`UPDATE users SET session_id=:session_id WHERE id=:id`,
+		map[string]interface{}{
+			"session_id": sessionID,
+			"id":         userID,
+		})
+
+	if err != nil {
+		return errors.Wrap(err, "")
+	}
+
+	return nil
 }
