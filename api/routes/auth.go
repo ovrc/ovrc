@@ -60,6 +60,7 @@ func (api Resource) AuthLogin(w http.ResponseWriter, r *http.Request) {
 		Name:     "session_id",
 		Value:    uuid.New().String(),
 		Secure:   secure,
+		SameSite: http.SameSiteLaxMode,
 		HttpOnly: true,
 		Path:     "/",
 	}
@@ -82,6 +83,7 @@ func (api Resource) AuthLogout(w http.ResponseWriter, r *http.Request) {
 		Secure:   secure,
 		HttpOnly: true,
 		Path:     "/",
+		SameSite: http.SameSiteLaxMode,
 		Expires:  time.Unix(0, 0),
 	}
 	http.SetCookie(w, cookie)
