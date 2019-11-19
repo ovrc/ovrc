@@ -11,6 +11,7 @@ import Login from "./Login";
 import Navbar from "./Navbar";
 import Dashboard from "./Dashboard";
 import Users from "./Users";
+import HTTPMonitoringList from "./HTTPMonitoringList";
 
 const App = () => {
   const [user, setUser] = useState(null);
@@ -55,6 +56,7 @@ const App = () => {
             <Router>
               <PrivateRoute as={Dashboard} path="/" />
               <PrivateRoute as={Users} path="/users" />
+              <PrivateRoute as={HTTPMonitoringList} path="/monitoring/http" />
             </Router>
           </div>
         </div>

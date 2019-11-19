@@ -41,14 +41,14 @@ const Navbar = () => {
           <div className="navbar-menu">
             <div className="navbar-end">
               <div className="navbar-item">
+                Logged in as &nbsp;
+                <UserContext.Consumer>
+                  {context => <strong>{context.user.username}</strong>}
+                </UserContext.Consumer>
+                &nbsp;
                 <div className="buttons">
                   <i className="button is-primary" onClick={logout}>
                     <strong>Logout</strong>
-                  </i>
-                  <i className="button is-primary" onClick={logout}>
-                    <UserContext.Consumer>
-                      {context => <strong>{context.user.username}</strong>}
-                    </UserContext.Consumer>
                   </i>
                 </div>
               </div>
