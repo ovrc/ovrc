@@ -1,8 +1,8 @@
-package routes
+package api
 
 import (
 	"github.com/go-chi/chi"
-	"github.com/ovrc/ovrc/appcontext"
+	"github.com/ovrc/ovrc/internal/appcontext"
 	"net/http"
 )
 

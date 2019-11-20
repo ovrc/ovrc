@@ -8,16 +8,16 @@ import (
 	"github.com/joaodlf/jsend"
 	"github.com/kelseyhightower/envconfig"
 	_ "github.com/lib/pq"
-	"github.com/ovrc/ovrc/appcontext"
-	"github.com/ovrc/ovrc/models"
-	"github.com/ovrc/ovrc/routes"
+	"github.com/ovrc/ovrc/internal/app/api"
+	"github.com/ovrc/ovrc/internal/appcontext"
+	"github.com/ovrc/ovrc/internal/model"
 	"github.com/teamwork/reload"
 	"log"
 	"net/http"
 )
 
 // SessionCheck is a middleware to check for the session_id before allowing access to the API.
-func SessionCheck(db *models.DB) func(http.Handler) http.Handler {
+func SessionCheck(db *model.DB) func(http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			// Allow /auth/login through so that the user can actually login.
@@ -74,8 +74,7 @@ func main() {
 			}
 		}()
 	}
-
-	db, err := models.NewDB(config.DBConnection)
+	db, err := model.NewDB(config.DBConnection)
 	if err != nil {
 		log.Fatalln("db:", err)
 	}
@@ -104,8 +103,8 @@ func main() {
 	ac := appcontext.AppContext{DB: db, Config: config}
 
 	// Register routes.
-	api := routes.Resource{AppContext: ac}
-	r.Mount("/", api.SetRoutes())
+	apiResource := api.Resource{AppContext: ac}
+	r.Mount("/", apiResource.SetRoutes())
 
 	// Not currently in use - but something to grow from in the future.
 	if config.UseSSL == "true" {

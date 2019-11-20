@@ -1,9 +1,9 @@
 package appcontext
 
-import "github.com/ovrc/ovrc/models"
+import "github.com/ovrc/ovrc/internal/model"
 
 type AppContext struct {
-	DB     models.Datastore
+	DB     model.Datastore
 	Config ConfigSpecification
 }
 

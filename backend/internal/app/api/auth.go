@@ -1,10 +1,10 @@
-package routes
+package api
 
 import (
 	"database/sql"
 	"github.com/google/uuid"
 	"github.com/joaodlf/jsend"
-	"github.com/ovrc/ovrc/validators"
+	"github.com/ovrc/ovrc/internal/app/api/validator"
 	"golang.org/x/crypto/bcrypt"
 	"net/http"
 	"time"
@@ -13,7 +13,7 @@ import (
 // AuthLogin performs a user login.
 func (api Resource) AuthLogin(w http.ResponseWriter, r *http.Request) {
 	db := api.AppContext.DB
-	form := &validators.LoginForm{
+	form := &validator.LoginForm{
 		Username: r.FormValue("username"),
 		Password: r.FormValue("password"),
 	}

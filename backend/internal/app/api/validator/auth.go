@@ -1,4 +1,4 @@
-package validators
+package validator
 
 // LoginForm represents the /auth/login form details.
 type LoginForm struct {

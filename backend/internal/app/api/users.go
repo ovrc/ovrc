@@ -1,14 +1,14 @@
-package routes
+package api
 
 import (
 	"github.com/joaodlf/jsend"
-	"github.com/ovrc/ovrc/models"
+	"github.com/ovrc/ovrc/internal/model"
 	"net/http"
 )
 
 // UsersMe returns the logged in user details.
 func (api Resource) UsersMe(w http.ResponseWriter, r *http.Request) {
-	user := r.Context().Value("user").(*models.User)
+	user := r.Context().Value("user").(*model.User)
 
 	jsend.Write(w,
 		jsend.StatusCode(200),

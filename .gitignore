@@ -5,8 +5,7 @@ dist/
 coverage/
 .idea/
 env/
-api/vendor/
-api/ovrc
+backend/vendor/
 api/config.toml
 flyway.conf
 .env.production
