@@ -2,6 +2,7 @@ package model
 
 import (
 	"github.com/lib/pq"
+	"github.com/pkg/errors"
 	"time"
 )
 
@@ -12,4 +13,17 @@ type HTTPMonitor struct {
 	DtUpdated pq.NullTime `db:"dt_updated"`
 	Endpoint  string      `db:"endpoint"`
 	Method    string      `db:"method"`
+}
+
+// SelectHTTPMonitors selects all HTTP monitors.
+func (db *DB) SelectHTTPMonitors() ([]HTTPMonitor, error) {
+	var monitors []HTTPMonitor
+
+	err := db.Select(&monitors, `SELECT * FROM http_monitors`)
+
+	if err != nil {
+		return monitors, errors.Wrap(err, "")
+	}
+
+	return monitors, nil
 }

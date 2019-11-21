@@ -12,6 +12,7 @@ type Datastore interface {
 	UpdateUserSessionID(userID int, sessionID uuid.UUID) error
 	SelectUserBySessionID(sessionID string) (*User, error)
 	SelectUsersForAdmin() ([]User, error)
+	SelectHTTPMonitors() ([]HTTPMonitor, error)
 }
 
 // DB holds a sql db.
