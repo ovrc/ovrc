@@ -13,6 +13,7 @@ type Datastore interface {
 	SelectUserBySessionID(sessionID string) (*User, error)
 	SelectUsersForAdmin() ([]User, error)
 	SelectHTTPMonitors() ([]HTTPMonitor, error)
+	InsertHTTPMonitorEntry() (HTTPMonitorEntry, error)
 }
 
 // DB holds a sql db.

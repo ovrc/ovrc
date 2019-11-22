@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-// User represents teh users db table.
+// User represents the users db table.
 type User struct {
 	ID        int         `db:"id"`
 	DtCreated time.Time   `db:"dt_created"`

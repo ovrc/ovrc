@@ -2,22 +2,22 @@ package main
 
 import (
 	"crypto/tls"
-	"fmt"
 	"github.com/kelseyhightower/envconfig"
 	"github.com/ovrc/ovrc/internal/appcontext"
 	"github.com/ovrc/ovrc/internal/model"
 	"github.com/teamwork/reload"
 	"log"
+	"net"
 	"net/http"
 	"net/http/httptrace"
 	"time"
 )
 
 type requestDuration struct {
-	start, connect, dns, tlsHandshake time.Duration
+	start, connect, dns, tlsHandshake, total time.Duration
 }
 
-func timeGet(url string) {
+func timeGet(db model.DB, url string, mID int) {
 	ticker := time.NewTicker(1 * time.Second)
 	for {
 		select {
@@ -56,19 +56,31 @@ func timeGet(url string) {
 
 			req = req.WithContext(httptrace.WithClientTrace(req.Context(), trace))
 
-			start = time.Now()
-
 			// Create a new http.Transport to avoid caching results.
-			client := &http.Client{Transport: &http.Transport{}}
+			client := &http.Client{Transport: &http.Transport{}, Timeout: 10 * time.Second}
 
 			start = time.Now()
-			r, _ := client.Do(req)
-			fmt.Println(url)
-			fmt.Printf("Total time: %v\n", time.Since(start))
-			fmt.Println(r.StatusCode)
-			fmt.Printf("%+v\n", rd)
-			fmt.Println("------------------")
+			_, err := client.Do(req)
+			rd.total = time.Since(start)
 
+			entry := model.HTTPMonitorEntry{
+				HTTPMonitorID: mID,
+			}
+
+			if err, ok := err.(net.Error); ok && err.Timeout() {
+				entry.Timeout = true
+			}
+			entry.DnsMs = rd.dns.Milliseconds()
+			entry.TLSHandshakeMs = rd.tlsHandshake.Milliseconds()
+			entry.ConnectMs = rd.connect.Milliseconds()
+			entry.FirstResponseByteMs = rd.start.Milliseconds()
+			entry.TotalMs = rd.total.Milliseconds()
+
+			entry, err = db.InsertHTTPMonitorEntry(entry)
+
+			if err != nil {
+				panic(err)
+			}
 		}
 	}
 }
@@ -90,6 +102,7 @@ func main() {
 			}
 		}()
 	}
+
 	db, err := model.NewDB(config.DBConnection)
 	if err != nil {
 		log.Fatalln("db:", err)
@@ -103,7 +116,7 @@ func main() {
 	for _, m := range monitors {
 		switch m.Method {
 		case "GET":
-			go timeGet(m.Endpoint)
+			go timeGet(*db, m.Endpoint, m.ID)
 		}
 	}
 
