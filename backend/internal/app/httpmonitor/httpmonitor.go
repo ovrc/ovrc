@@ -1,11 +1,9 @@
-package main
+package httpmonitor
 
 import (
 	"crypto/tls"
-	"github.com/kelseyhightower/envconfig"
 	"github.com/ovrc/ovrc/internal/appcontext"
 	"github.com/ovrc/ovrc/internal/model"
-	"github.com/teamwork/reload"
 	"log"
 	"net"
 	"net/http"
@@ -13,11 +11,18 @@ import (
 	"time"
 )
 
+// Resource holds the various context values.
+type Resource struct {
+	AppContext appcontext.AppContext
+}
+
 type requestDuration struct {
 	start, connect, dns, tlsHandshake, total time.Duration
 }
 
-func timeGet(db model.DB, url string, mID int) {
+func (httpMon Resource) timeGet(url string, mID int) {
+	db := httpMon.AppContext.DB
+
 	ticker := time.NewTicker(1 * time.Second)
 	for {
 		select {
@@ -85,38 +90,20 @@ func timeGet(db model.DB, url string, mID int) {
 	}
 }
 
-func main() {
-	var config appcontext.ConfigSpecification
-
-	err := envconfig.Process("ovrc", &config)
-	if err != nil {
-		log.Fatal("config:", err.Error())
-	}
-
-	// Auto reload on build.
-	if config.Env == "development" {
-		go func() {
-			err := reload.Do(log.Printf)
-			if err != nil {
-				panic(err) // Only returns initialisation errors.
-			}
-		}()
-	}
-
-	db, err := model.NewDB(config.DBConnection)
-	if err != nil {
-		log.Fatalln("db:", err)
-	}
+// Run kicks off the http monitors.
+func (httpMon Resource) Run() {
+	db := httpMon.AppContext.DB
 
 	monitors, err := db.SelectHTTPMonitors()
 	if err != nil {
 		log.Fatalln("db:", err)
 	}
 
+	// TODO: All other http methods.
 	for _, m := range monitors {
 		switch m.Method {
 		case "GET":
-			go timeGet(*db, m.Endpoint, m.ID)
+			go httpMon.timeGet(m.Endpoint, m.ID)
 		}
 	}
 
