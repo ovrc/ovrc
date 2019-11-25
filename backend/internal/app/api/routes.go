@@ -24,5 +24,10 @@ func (api Resource) SetRoutes() http.Handler {
 		r.Get("/me", api.UsersMe)
 		r.Get("/", api.Users)
 	})
+
+	r.Route("/monitoring", func(r chi.Router) {
+		r.Get("/http", api.MonitoringHTTP)
+	})
+
 	return r
 }

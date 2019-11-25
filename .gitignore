@@ -6,6 +6,7 @@ coverage/
 .idea/
 env/
 backend/vendor/
+backend/cmd/api/api
 api/config.toml
 flyway.conf
 .env.production

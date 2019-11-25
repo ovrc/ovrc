@@ -8,8 +8,6 @@ const Users = () => {
     api_request("/users", "GET").then(res => {
       if (res.status === "success") {
         setUsers(res.data.users);
-      } else {
-        setUsers(false);
       }
     });
   }, []);
