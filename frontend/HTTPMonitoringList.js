@@ -3,14 +3,29 @@ import { api_request } from "./Helpers";
 
 const HTTPMonitoringList = () => {
   const [monitors, setMonitors] = useState([]);
+  const [loaded, setLoaded] = useState(null);
 
   useEffect(() => {
     api_request("/monitoring/http", "GET").then(res => {
       if (res.status === "success") {
-        setMonitors(res.data.monitors);
+        if (res.data.monitors && res.data.monitors.length > 0) {
+          setMonitors(res.data.monitors);
+          setLoaded(true);
+        } else {
+          // No results.
+          setLoaded(false);
+        }
       }
     });
   }, []);
+
+  if (loaded === null) {
+    return "Loading...";
+  }
+
+  if (loaded === false) {
+    return "No HTTP monitors found!";
+  }
 
   if (monitors.length > 0) {
     return (
@@ -22,13 +37,17 @@ const HTTPMonitoringList = () => {
           <thead>
             <tr>
               <th>Endpoint</th>
-              <th>Avg. Response Time</th>
+              <th>Avg. Total Time</th>
+              <th>Avg. Total Time</th>
+              <th>Avg. Total Time</th>
+              <th>Avg. Total Time</th>
+              <th>Avg. Total Time</th>
             </tr>
           </thead>
           <tbody>
             {monitors.map(function(monitor) {
               return (
-                <tr>
+                <tr key={monitor.id}>
                   <td>
                     <b>{monitor.method}</b> {monitor.endpoint}
                   </td>
@@ -41,8 +60,6 @@ const HTTPMonitoringList = () => {
       </div>
     );
   }
-
-  return "Loading...";
 };
 
 export default HTTPMonitoringList;

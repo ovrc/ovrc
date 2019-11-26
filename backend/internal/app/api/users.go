@@ -34,6 +34,7 @@ func (api Resource) Users(w http.ResponseWriter, r *http.Request) {
 	var userList []map[string]interface{}
 	for _, row := range users {
 		userList = append(userList, map[string]interface{}{
+			"id":         row.ID,
 			"username":   row.Username,
 			"dt_created": row.DtCreated.Format("2006-01-02 03:04:05"),
 		})

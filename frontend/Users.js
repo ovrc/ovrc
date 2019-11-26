@@ -25,7 +25,7 @@ const Users = () => {
         <tbody>
           {users.map(function(user) {
             return (
-              <tr>
+              <tr key={user.id}>
                 <td>{user.username}</td>
                 <td>{user.dt_created}</td>
                 <td>
