@@ -14,6 +14,7 @@ type Datastore interface {
 	SelectUsersForAdmin() ([]User, error)
 
 	SelectHTTPMonitors() ([]HTTPMonitor, error)
+	InsertHTTPMonitor(HTTPMonitor) (HTTPMonitor, error)
 
 	InsertHTTPMonitorEntry(HTTPMonitorEntry) (HTTPMonitorEntry, error)
 	SelectHTTPMonitorEntriesForDashboard() ([]HTTPMonitorEntryDashboard, error)

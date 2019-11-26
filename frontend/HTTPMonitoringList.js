@@ -5,6 +5,9 @@ const HTTPMonitoringList = () => {
   const [monitors, setMonitors] = useState([]);
   const [loaded, setLoaded] = useState(null);
   const [showAddModal, setShowAddModal] = useState(false);
+  const [disableAddButton, setDisableAddButton] = useState(false);
+  const [method, updateMethod] = useState("");
+  const [url, updateUrl] = useState("");
 
   useEffect(() => {
     api_request("/monitoring/http", "GET").then(res => {
@@ -23,6 +26,19 @@ const HTTPMonitoringList = () => {
   // Shows or hides the modal, depending on what it is currently set to.
   function handleShowAddModal() {
     setShowAddModal(!showAddModal);
+  }
+
+  function addMonitor() {
+    setDisableAddButton(true);
+    api_request("/monitoring/http", "POST", {
+      method: method,
+      url: url
+    }).then(res => {
+      setDisableAddButton(false);
+      setShowAddModal(false);
+      updateUrl("");
+      updateMethod("");
+    });
   }
 
   if (loaded === null) {
@@ -75,8 +91,13 @@ const HTTPMonitoringList = () => {
                 onClick={handleShowAddModal}
               ></button>
             </header>
-            <section className="modal-card-body">
-              <form>
+            <form
+              onSubmit={e => {
+                e.preventDefault();
+                addMonitor();
+              }}
+            >
+              <section className="modal-card-body">
                 <div className="field is-horizontal">
                   <div className="field-label is-normal">
                     <label className="label">Method</label>
@@ -85,8 +106,12 @@ const HTTPMonitoringList = () => {
                     <div className="field">
                       <p className="control">
                         <div className="select">
-                          <select>
-                            <option>GET</option>
+                          <select
+                            onChange={e => updateMethod(e.target.value)}
+                            required
+                          >
+                            <option disabled selected value=""></option>
+                            <option value="GET">GET</option>
                           </select>
                         </div>
                       </p>
@@ -104,19 +129,30 @@ const HTTPMonitoringList = () => {
                           className="input"
                           type="text"
                           placeholder="https://www.google.com/"
+                          onChange={e => updateUrl(e.target.value)}
+                          required
+                          value={url}
                         />
                       </p>
                     </div>
                   </div>
                 </div>
-              </form>
-            </section>
-            <footer className="modal-card-foot">
-              <button className="button is-success">Add Monitor</button>
-              <button className="button" onClick={handleShowAddModal}>
-                Cancel
-              </button>
-            </footer>
+              </section>
+              <footer className="modal-card-foot">
+                <button
+                  disabled={disableAddButton}
+                  className={
+                    "button is-success " +
+                    (disableAddButton ? "is-loading" : null)
+                  }
+                >
+                  Add Monitor
+                </button>
+                <button className="button" onClick={handleShowAddModal}>
+                  Cancel
+                </button>
+              </footer>
+            </form>
           </div>
         </div>
       </div>

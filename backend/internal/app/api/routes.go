@@ -27,6 +27,7 @@ func (api Resource) SetRoutes() http.Handler {
 
 	r.Route("/monitoring", func(r chi.Router) {
 		r.Get("/http", api.MonitoringHTTP)
+		r.Post("/http", api.MonitoringHTTPAdd)
 	})
 
 	return r

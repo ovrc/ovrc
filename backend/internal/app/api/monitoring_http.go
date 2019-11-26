@@ -2,6 +2,8 @@ package api
 
 import (
 	"github.com/joaodlf/jsend"
+	"github.com/ovrc/ovrc/internal/app/api/validator"
+	"github.com/ovrc/ovrc/internal/model"
 	"net/http"
 )
 
@@ -33,6 +35,44 @@ func (api Resource) MonitoringHTTP(w http.ResponseWriter, r *http.Request) {
 		jsend.StatusCode(200),
 		jsend.Data(map[string]interface{}{
 			"monitors": entryList,
+		}),
+	)
+}
+
+// MonitoringHTTPAdd adds a new HTTP monitor.
+func (api Resource) MonitoringHTTPAdd(w http.ResponseWriter, r *http.Request) {
+	form := &validator.HTTPMonitorAdd{
+		Method: r.FormValue("method"),
+		URL:    r.FormValue("url"),
+	}
+
+	if form.Validate() == false {
+		jsend.Write(w,
+			jsend.Data(form.Errors),
+			jsend.StatusCode(400),
+		)
+		return
+	}
+
+	mon := model.HTTPMonitor{
+		Method:   form.Method,
+		Endpoint: form.URL,
+	}
+
+	httpMonitor, err := api.AppContext.DB.InsertHTTPMonitor(mon)
+
+	if err != nil {
+		jsend.Write(w,
+			jsend.Message(err.Error()),
+			jsend.StatusCode(500),
+		)
+		return
+	}
+
+	jsend.Write(w,
+		jsend.StatusCode(200),
+		jsend.Data(map[string]interface{}{
+			"id": httpMonitor.ID,
 		}),
 	)
 }

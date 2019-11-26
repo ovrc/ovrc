@@ -28,6 +28,7 @@ export const api_request = (endpoint, method, params) => {
     }
   })
     .then(res => {
+      console.log(res);
       return res.data;
     })
     .catch(function(error) {

@@ -27,3 +27,21 @@ func (db *DB) SelectHTTPMonitors() ([]HTTPMonitor, error) {
 
 	return monitors, nil
 }
+
+func (db *DB) InsertHTTPMonitor(mon HTTPMonitor) (HTTPMonitor, error) {
+	res := HTTPMonitor{}
+	stmt, err := db.PrepareNamed(`INSERT INTO http_monitors (method, endpoint) 
+                        	VALUES (:method, :endpoint) RETURNING *`)
+
+	if err != nil {
+		return res, err
+	}
+
+	err = stmt.Get(&res, mon)
+
+	if err != nil {
+		return res, err
+	}
+
+	return res, nil
+}
