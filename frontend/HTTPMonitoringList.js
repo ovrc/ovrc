@@ -20,8 +20,9 @@ const HTTPMonitoringList = () => {
     });
   }, []);
 
+  // Shows or hides the modal, depending on what it is currently set to.
   function handleShowAddModal() {
-    setShowAddModal(true);
+    setShowAddModal(!showAddModal);
   }
 
   if (loaded === null) {
@@ -67,13 +68,54 @@ const HTTPMonitoringList = () => {
           <div className="modal-background"></div>
           <div className="modal-card">
             <header className="modal-card-head">
-              <p className="modal-card-title">Modal title</p>
-              <button className="delete" aria-label="close"></button>
+              <p className="modal-card-title">Add New Monitor</p>
+              <button
+                className="delete"
+                aria-label="close"
+                onClick={handleShowAddModal}
+              ></button>
             </header>
-            <section className="modal-card-body"></section>
+            <section className="modal-card-body">
+              <form>
+                <div className="field is-horizontal">
+                  <div className="field-label is-normal">
+                    <label className="label">Method</label>
+                  </div>
+                  <div className="field-body">
+                    <div className="field">
+                      <p className="control">
+                        <div className="select">
+                          <select>
+                            <option>GET</option>
+                          </select>
+                        </div>
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <div className="field is-horizontal">
+                  <div className="field-label is-normal">
+                    <label className="label">URL</label>
+                  </div>
+                  <div className="field-body">
+                    <div className="field">
+                      <p className="control">
+                        <input
+                          className="input"
+                          type="text"
+                          placeholder="https://www.google.com/"
+                        />
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </form>
+            </section>
             <footer className="modal-card-foot">
-              <button className="button is-success">Save changes</button>
-              <button className="button">Cancel</button>
+              <button className="button is-success">Add Monitor</button>
+              <button className="button" onClick={handleShowAddModal}>
+                Cancel
+              </button>
             </footer>
           </div>
         </div>
