@@ -8,6 +8,7 @@ const HTTPMonitoringList = () => {
   const [disableAddButton, setDisableAddButton] = useState(false);
   const [method, updateMethod] = useState("");
   const [url, updateUrl] = useState("");
+  const [hideNotification, setHideNotification] = useState(true);
 
   useEffect(() => {
     // Grab initial data on load.
@@ -38,6 +39,10 @@ const HTTPMonitoringList = () => {
     setShowAddModal(!showAddModal);
   }
 
+  function handleNotification() {
+    setHideNotification(!hideNotification);
+  }
+
   function addMonitor() {
     setDisableAddButton(true);
     api_request("/monitoring/http", "POST", {
@@ -46,6 +51,7 @@ const HTTPMonitoringList = () => {
     }).then(res => {
       setDisableAddButton(false);
       setShowAddModal(false);
+      setHideNotification(false);
       updateUrl("");
       updateMethod("");
     });
@@ -62,6 +68,15 @@ const HTTPMonitoringList = () => {
   if (monitors.length > 0) {
     return (
       <div>
+        <div
+          className={
+            "notification is-primary " + (hideNotification ? "is-hidden" : null)
+          }
+        >
+          <button className="delete" onClick={handleNotification}></button>
+          New monitor added! Please wait for data to refresh...
+        </div>
+
         <div className="buttons is-pulled-right	">
           <button className="button is-primary" onClick={handleShowAddModal}>
             Add
