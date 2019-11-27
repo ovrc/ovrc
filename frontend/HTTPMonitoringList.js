@@ -10,6 +10,16 @@ const HTTPMonitoringList = () => {
   const [url, updateUrl] = useState("");
 
   useEffect(() => {
+    // Grab initial data on load.
+    updateMonitoringList();
+
+    // Update data every 15 seconds.
+    setInterval(function() {
+      updateMonitoringList();
+    }, 15000);
+  }, []);
+
+  function updateMonitoringList() {
     api_request("/monitoring/http", "GET").then(res => {
       if (res.status === "success") {
         if (res.data.monitors && res.data.monitors.length > 0) {
@@ -21,7 +31,7 @@ const HTTPMonitoringList = () => {
         }
       }
     });
-  }, []);
+  }
 
   // Shows or hides the modal, depending on what it is currently set to.
   function handleShowAddModal() {
