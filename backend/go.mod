@@ -11,6 +11,7 @@ require (
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/lib/pq v1.2.0
 	github.com/pkg/errors v0.8.1
+	github.com/stretchr/testify v1.4.0
 	github.com/teamwork/reload v1.2.1
 	golang.org/x/crypto v0.0.0-20191119213627-4f8c1d86b1ba
 )
