@@ -12,7 +12,7 @@ import (
 func (httpMon Resource) get(url string, mID int) {
 	db := httpMon.AppContext.DB
 
-	ticker := time.NewTicker(1 * time.Second)
+	ticker := time.NewTicker(5 * time.Second)
 	for {
 		select {
 		case _ = <-ticker.C:

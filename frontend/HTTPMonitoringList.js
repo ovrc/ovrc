@@ -15,9 +15,11 @@ const HTTPMonitoringList = () => {
     updateMonitoringList();
 
     // Update data every 15 seconds.
-    setInterval(function() {
+    const id = setInterval(function() {
       updateMonitoringList();
-    }, 15000);
+    }, 3000);
+
+    return () => clearTimeout(id);
   }, []);
 
   function updateMonitoringList() {
