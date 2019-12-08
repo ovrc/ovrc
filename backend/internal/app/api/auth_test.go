@@ -29,6 +29,23 @@ func (mdb *TestAuthLoginSuccessDbMock) UpdateUserSessionID(userID int, sessionID
 	return nil
 }
 
+type TestAuthLoginMissingCredentialsDbMock struct {
+	model.Datastore
+}
+
+type TestAuthLoginInvalidCredentialsDbMock struct {
+	model.Datastore
+}
+
+func (mdb *TestAuthLoginInvalidCredentialsDbMock) SelectUser(username string) (*model.User, error) {
+	user := &model.User{
+		ID:       1,
+		Username: username,
+		Password: "this-won't-work",
+	}
+	return user, nil
+}
+
 // TestAuthLoginSuccess tests for a successful login.
 func TestAuthLoginSuccess(t *testing.T) {
 	rec := httptest.NewRecorder()
@@ -47,10 +64,6 @@ func TestAuthLoginSuccess(t *testing.T) {
 	assert.Equal(t, 200, rec.Code)
 }
 
-type TestAuthLoginMissingCredentialsDbMock struct {
-	model.Datastore
-}
-
 // TestAuthLoginMissingCredentials tests for a missing username/password.
 func TestAuthLoginMissingCredentials(t *testing.T) {
 	rec := httptest.NewRecorder()
@@ -67,20 +80,7 @@ func TestAuthLoginMissingCredentials(t *testing.T) {
 	assert.Equal(t, `{"data":{"password":"missing","username":"missing"},"status":"fail"}`, rec.Body.String())
 }
 
-type TestAuthLoginInvalidCredentialsDbMock struct {
-	model.Datastore
-}
-
-func (mdb *TestAuthLoginInvalidCredentialsDbMock) SelectUser(username string) (*model.User, error) {
-	user := &model.User{
-		ID:       1,
-		Username: username,
-		Password: "this-won't-work",
-	}
-	return user, nil
-}
-
-// TestAuthLoginMissingCredentials tests for a missing username/password.
+// TestAuthLoginInvalidCredentials tests for an invalid username/password combination.
 func TestAuthLoginInvalidCredentials(t *testing.T) {
 	rec := httptest.NewRecorder()
 	data := url.Values{}
@@ -96,4 +96,5 @@ func TestAuthLoginInvalidCredentials(t *testing.T) {
 	http.HandlerFunc(apiResource.AuthLogin).ServeHTTP(rec, req)
 
 	assert.Equal(t, 400, rec.Code)
+	assert.Equal(t, `{"data":{"validation":"Could not validate credentials."},"status":"fail"}`, rec.Body.String())
 }
