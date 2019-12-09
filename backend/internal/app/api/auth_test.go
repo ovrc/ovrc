@@ -8,7 +8,6 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"net/url"
-	"strings"
 	"testing"
 )
 
@@ -53,8 +52,7 @@ func TestAuthLoginSuccess(t *testing.T) {
 	data.Set("username", "joao")
 	data.Set("password", "password")
 
-	req, _ := http.NewRequest("POST", "/auth/login", strings.NewReader(data.Encode()))
-	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
+	req, _ := newRequest("POST", "/auth/login", data)
 
 	ac := appcontext.AppContext{DB: &TestAuthLoginSuccessDbMock{}}
 	apiResource := Resource{AppContext: ac}
@@ -68,8 +66,7 @@ func TestAuthLoginSuccess(t *testing.T) {
 func TestAuthLoginMissingCredentials(t *testing.T) {
 	rec := httptest.NewRecorder()
 
-	req, _ := http.NewRequest("POST", "/auth/login", nil)
-	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
+	req, _ := newRequest("POST", "/auth/login", nil)
 
 	ac := appcontext.AppContext{DB: &TestAuthLoginMissingCredentialsDbMock{}}
 	apiResource := Resource{AppContext: ac}
@@ -87,8 +84,7 @@ func TestAuthLoginInvalidCredentials(t *testing.T) {
 	data.Set("username", "joao")
 	data.Set("password", "password")
 
-	req, _ := http.NewRequest("POST", "/auth/login", strings.NewReader(data.Encode()))
-	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
+	req, _ := newRequest("POST", "/auth/login", data)
 
 	ac := appcontext.AppContext{DB: &TestAuthLoginInvalidCredentialsDbMock{}}
 	apiResource := Resource{AppContext: ac}
