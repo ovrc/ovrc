@@ -39,7 +39,7 @@ func (api Resource) MonitoringHTTP(w http.ResponseWriter, r *http.Request) {
 	)
 }
 
-// MonitoringHTTPAdd adds a new HTTP monitor.
+// MonitoringHTTPAdd adds a new HTTP monitor. //TODO: tests
 func (api Resource) MonitoringHTTPAdd(w http.ResponseWriter, r *http.Request) {
 	form := &validator.HTTPMonitorAdd{
 		Method: r.FormValue("method"),
