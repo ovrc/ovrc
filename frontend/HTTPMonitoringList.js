@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { api_request } from "./Helpers";
 import { Sparklines, SparklinesLine, SparklinesSpots } from "react-sparklines";
+import prettyMilliseconds from "pretty-ms";
 
 const HTTPMonitoringList = () => {
   const [monitors, setMonitors] = useState([]);
@@ -113,7 +114,7 @@ const HTTPMonitoringList = () => {
                   <td>
                     <b>{monitor.method}</b> {monitor.endpoint}
                   </td>
-                  <td>{monitor.avg_total_ms}ms</td>
+                  <td>{prettyMilliseconds(monitor.avg_total_ms)}</td>
                   <td>
                     <Sparklines data={monitor.last_entries}>
                       <SparklinesLine color="green" />
