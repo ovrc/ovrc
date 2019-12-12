@@ -25,6 +25,8 @@ type HTTPMonitorEntryDashboard struct {
 	Endpoint   string `db:"endpoint"`
 	Method     string `db:"method"`
 	AvgTotalMs int    `db:"avg_total_ms"`
+	MaxTotalMs int    `db:"max_total_ms"`
+	MinTotalMs int    `db:"min_total_ms"`
 }
 
 func (db *DB) InsertHTTPMonitorEntry(entry HTTPMonitorEntry) (HTTPMonitorEntry, error) {
@@ -45,7 +47,8 @@ func (db *DB) InsertHTTPMonitorEntry(entry HTTPMonitorEntry) (HTTPMonitorEntry, 
 func (db *DB) SelectHTTPMonitorEntriesForDashboard(period int) ([]HTTPMonitorEntryDashboard, error) {
 	var entries []HTTPMonitorEntryDashboard
 
-	err := db.Select(&entries, fmt.Sprintf(`SELECT hm.id, hm.endpoint, hm.method, cast(avg(hme.total_ms) AS INT) AS avg_total_ms
+	err := db.Select(&entries, fmt.Sprintf(`SELECT hm.id, hm.endpoint, hm.method, cast(avg(hme.total_ms) AS INT) AS avg_total_ms, 
+							MAX(hme.total_ms) AS max_total_ms, MIN(hme.total_ms) AS min_total_ms
 							FROM http_monitor_entries AS hme
          					JOIN http_monitors AS hm ON hm.id = hme.http_monitor_id
 							WHERE hme.dt_created >= current_timestamp - INTERVAL '%d hours'

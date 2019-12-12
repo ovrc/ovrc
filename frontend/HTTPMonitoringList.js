@@ -99,6 +99,8 @@ const HTTPMonitoringList = () => {
             <tr>
               <th>Endpoint</th>
               <th>Avg. Total Time</th>
+              <th>Min Total Time</th>
+              <th>Max Total Time</th>
               <th>
                 {/* TODO: Find an alternative to this? */}
                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -115,6 +117,8 @@ const HTTPMonitoringList = () => {
                     <b>{monitor.method}</b> {monitor.endpoint}
                   </td>
                   <td>{prettyMilliseconds(monitor.avg_total_ms)}</td>
+                  <td>{prettyMilliseconds(monitor.min_total_ms)}</td>
+                  <td>{prettyMilliseconds(monitor.max_total_ms)}</td>
                   <td>
                     <Sparklines data={monitor.last_entries}>
                       <SparklinesLine color="green" />

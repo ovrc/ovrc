@@ -71,6 +71,8 @@ func (api Resource) MonitoringHTTP(w http.ResponseWriter, r *http.Request) {
 			"endpoint":     row.Endpoint,
 			"method":       row.Method,
 			"avg_total_ms": row.AvgTotalMs,
+			"max_total_ms": row.MaxTotalMs,
+			"min_total_ms": row.MinTotalMs,
 			"last_entries": lastEntriesValues,
 		})
 	}
