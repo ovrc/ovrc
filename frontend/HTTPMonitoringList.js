@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { api_request } from "./Helpers";
+import { Sparklines, SparklinesLine, SparklinesSpots } from "react-sparklines";
 
 const HTTPMonitoringList = () => {
   const [monitors, setMonitors] = useState([]);
@@ -9,31 +10,26 @@ const HTTPMonitoringList = () => {
   const [method, updateMethod] = useState("");
   const [url, updateUrl] = useState("");
   const [hideNotification, setHideNotification] = useState(true);
+  const [periodSelectValue, setPeriodSelectValue] = useState("hour24");
 
   useEffect(() => {
-    // Grab initial data on load.
     updateMonitoringList();
-
-    // Update data every 15 seconds.
-    const id = setInterval(function() {
-      updateMonitoringList();
-    }, 3000);
-
-    return () => clearTimeout(id);
-  }, []);
+  }, [periodSelectValue]);
 
   function updateMonitoringList() {
-    api_request("/monitoring/http", "GET").then(res => {
-      if (res.status === "success") {
-        if (res.data.monitors && res.data.monitors.length > 0) {
-          setMonitors(res.data.monitors);
-          setLoaded(true);
-        } else {
-          // No results.
-          setLoaded(false);
+    api_request("/monitoring/http", "GET", { period: periodSelectValue }).then(
+      res => {
+        if (res.status === "success") {
+          if (res.data.monitors && res.data.monitors.length > 0) {
+            setMonitors(res.data.monitors);
+            setLoaded(true);
+          } else {
+            // No results.
+            setLoaded(false);
+          }
         }
       }
-    });
+    );
   }
 
   // Shows or hides the modal, depending on what it is currently set to.
@@ -84,11 +80,30 @@ const HTTPMonitoringList = () => {
             Add
           </button>
         </div>
+        <div className="select">
+          <select
+            onChange={e => setPeriodSelectValue(e.target.value)}
+            value={periodSelectValue}
+          >
+            <option value="hour1">Last 1h</option>
+            <option value="hour3">Last 3h</option>
+            <option value="hour6">Last 6h</option>
+            <option value="hour12">Last 12h</option>
+            <option value="hour24">Last 24h</option>
+          </select>
+        </div>
+        <hr />
         <table className="table">
           <thead>
             <tr>
               <th>Endpoint</th>
               <th>Avg. Total Time</th>
+              <th>
+                {/* TODO: Find an alternative to this? */}
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -99,6 +114,12 @@ const HTTPMonitoringList = () => {
                     <b>{monitor.method}</b> {monitor.endpoint}
                   </td>
                   <td>{monitor.avg_total_ms}ms</td>
+                  <td>
+                    <Sparklines data={monitor.last_entries}>
+                      <SparklinesLine color="green" />
+                      <SparklinesSpots />
+                    </Sparklines>
+                  </td>
                 </tr>
               );
             })}
@@ -136,8 +157,9 @@ const HTTPMonitoringList = () => {
                           <select
                             onChange={e => updateMethod(e.target.value)}
                             required
+                            value=""
                           >
-                            <option disabled selected value=""></option>
+                            <option disabled value=""></option>
                             <option value="GET">GET</option>
                           </select>
                         </div>

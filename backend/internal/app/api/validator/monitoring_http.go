@@ -1,13 +1,19 @@
 package validator
 
-// LoginForm represents the /auth/login form details.
+// HTTPMonitorAdd represents the POST /monitor/http form details.
 type HTTPMonitorAdd struct {
 	Method string
 	URL    string
 	Errors map[string]interface{}
 }
 
-// Validate validates the LoginForm data.
+// HTTPMonitorList represents the GET /monitor/http form details.
+type HTTPMonitorList struct {
+	Period string
+	Errors map[string]interface{}
+}
+
+// Validate validates the HTTPMonitorAdd data.
 func (form *HTTPMonitorAdd) Validate() bool {
 	form.Errors = make(map[string]interface{})
 
@@ -27,6 +33,24 @@ func (form *HTTPMonitorAdd) Validate() bool {
 
 	if form.URL == "" {
 		form.Errors["url"] = "missing"
+	}
+
+	return len(form.Errors) == 0
+}
+
+// Validate validates the HTTPMonitorList data.
+func (form *HTTPMonitorList) Validate() bool {
+	form.Errors = make(map[string]interface{})
+
+	validPeriod := false
+	switch form.Period {
+	case "hour1", "hour3", "hour6", "hour12", "hour24":
+		validPeriod = true
+		break
+	}
+
+	if !validPeriod {
+		form.Errors["period"] = "invalid value"
 	}
 
 	return len(form.Errors) == 0

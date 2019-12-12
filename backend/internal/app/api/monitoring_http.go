@@ -5,11 +5,39 @@ import (
 	"github.com/ovrc/ovrc/internal/app/api/validator"
 	"github.com/ovrc/ovrc/internal/model"
 	"net/http"
+	"strconv"
+	"strings"
 )
 
 // MonitoringHTTP returns a list of http monitors with related figures for the dashboard.
 func (api Resource) MonitoringHTTP(w http.ResponseWriter, r *http.Request) {
-	entries, err := api.AppContext.DB.SelectHTTPMonitorEntriesForDashboard()
+	db := api.AppContext.DB
+
+	period := r.URL.Query().Get("period")
+
+	// Default value.
+	if period == "" {
+		period = "hour24"
+	}
+
+	switch period {
+	case "hour1", "hour3", "hour6", "hour12", "hour24":
+		periodHourRemoved := strings.ReplaceAll(period, "hour", "")
+		period = periodHourRemoved
+		break
+	}
+
+	periodInt, err := strconv.Atoi(period)
+
+	if err != nil {
+		jsend.Write(w,
+			jsend.Message(err.Error()),
+			jsend.StatusCode(500),
+		)
+		return
+	}
+
+	entries, err := db.SelectHTTPMonitorEntriesForDashboard(periodInt)
 
 	if err != nil {
 		jsend.Write(w,
@@ -23,11 +51,27 @@ func (api Resource) MonitoringHTTP(w http.ResponseWriter, r *http.Request) {
 
 	var entryList []map[string]interface{}
 	for _, row := range entries {
+		lastEntries, err := db.SelectLastXHTTPMonitorEntries(row.ID, 10)
+
+		if err != nil {
+			jsend.Write(w,
+				jsend.Message(err.Error()),
+				jsend.StatusCode(500),
+			)
+			return
+		}
+
+		var lastEntriesValues []int64
+		for _, row := range lastEntries {
+			lastEntriesValues = append(lastEntriesValues, row.TotalMs)
+		}
+
 		entryList = append(entryList, map[string]interface{}{
 			"id":           row.ID,
 			"endpoint":     row.Endpoint,
 			"method":       row.Method,
 			"avg_total_ms": row.AvgTotalMs,
+			"last_entries": lastEntriesValues,
 		})
 	}
 

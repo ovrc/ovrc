@@ -17,7 +17,8 @@ type Datastore interface {
 	InsertHTTPMonitor(HTTPMonitor) (HTTPMonitor, error)
 
 	InsertHTTPMonitorEntry(HTTPMonitorEntry) (HTTPMonitorEntry, error)
-	SelectHTTPMonitorEntriesForDashboard() ([]HTTPMonitorEntryDashboard, error)
+	SelectHTTPMonitorEntriesForDashboard(hours int) ([]HTTPMonitorEntryDashboard, error)
+	SelectLastXHTTPMonitorEntries(entryID, limit int) ([]HTTPMonitorEntry, error)
 }
 
 // DB holds a sql db.

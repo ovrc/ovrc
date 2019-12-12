@@ -1,6 +1,7 @@
 package model
 
 import (
+	"fmt"
 	"github.com/pkg/errors"
 	"time"
 )
@@ -41,18 +42,34 @@ func (db *DB) InsertHTTPMonitorEntry(entry HTTPMonitorEntry) (HTTPMonitorEntry, 
 	return entry, nil
 }
 
-func (db *DB) SelectHTTPMonitorEntriesForDashboard() ([]HTTPMonitorEntryDashboard, error) {
+func (db *DB) SelectHTTPMonitorEntriesForDashboard(period int) ([]HTTPMonitorEntryDashboard, error) {
 	var entries []HTTPMonitorEntryDashboard
 
-	err := db.Select(&entries, `SELECT hm.id, hm.endpoint, hm.method, cast(avg(hme.total_ms) AS INT) AS avg_total_ms
+	err := db.Select(&entries, fmt.Sprintf(`SELECT hm.id, hm.endpoint, hm.method, cast(avg(hme.total_ms) AS INT) AS avg_total_ms
 							FROM http_monitor_entries AS hme
          					JOIN http_monitors AS hm ON hm.id = hme.http_monitor_id
-							WHERE hme.dt_created >= current_timestamp - INTERVAL '5 hours'
+							WHERE hme.dt_created >= current_timestamp - INTERVAL '%d hours'
 							GROUP BY hm.id, hm.endpoint, hm.method
-							ORDER BY hm.id ASC;`)
+							ORDER BY hm.id ASC;`, period))
 
 	if err != nil {
 		return entries, errors.Wrap(err, "")
+	}
+
+	return entries, nil
+}
+
+func (db *DB) SelectLastXHTTPMonitorEntries(entryID, limit int) ([]HTTPMonitorEntry, error) {
+	var entries []HTTPMonitorEntry
+
+	err := db.Select(&entries, fmt.Sprintf(`SELECT hme.total_ms 
+								FROM http_monitor_entries AS hme
+								WHERE hme.http_monitor_id = $1
+								ORDER BY hme.id desc
+								LIMIT %d`, limit), entryID)
+
+	if err != nil {
+		return entries, err
 	}
 
 	return entries, nil

@@ -14,7 +14,7 @@ type TestMonitoringHTTPDbMock struct {
 	model.Datastore
 }
 
-func (mdb *TestMonitoringHTTPDbMock) SelectHTTPMonitorEntriesForDashboard() ([]model.HTTPMonitorEntryDashboard, error) {
+func (mdb *TestMonitoringHTTPDbMock) SelectHTTPMonitorEntriesForDashboard(period int) ([]model.HTTPMonitorEntryDashboard, error) {
 	mons := []model.HTTPMonitorEntryDashboard{
 		{ID: 1, Endpoint: "https://www.google.com/", Method: "GET", AvgTotalMs: 100},
 		{ID: 2, Endpoint: "https://www.golang.org/", Method: "GET", AvgTotalMs: 200},
@@ -25,11 +25,23 @@ func (mdb *TestMonitoringHTTPDbMock) SelectHTTPMonitorEntriesForDashboard() ([]m
 	return mons, nil
 }
 
+func (mdb *TestMonitoringHTTPDbMock) SelectLastXHTTPMonitorEntries(entryID, limit int) ([]model.HTTPMonitorEntry, error) {
+	entries := []model.HTTPMonitorEntry{
+		{TotalMs: 100},
+		{TotalMs: 200},
+		{TotalMs: 300},
+		{TotalMs: 400},
+		{TotalMs: 500},
+	}
+
+	return entries, nil
+}
+
 type TestMonitoringHTTPNoRowsDbMock struct {
 	model.Datastore
 }
 
-func (mdb *TestMonitoringHTTPNoRowsDbMock) SelectHTTPMonitorEntriesForDashboard() ([]model.HTTPMonitorEntryDashboard, error) {
+func (mdb *TestMonitoringHTTPNoRowsDbMock) SelectHTTPMonitorEntriesForDashboard(period int) ([]model.HTTPMonitorEntryDashboard, error) {
 	var mons []model.HTTPMonitorEntryDashboard
 	return mons, errors.New("no rows")
 }
@@ -46,7 +58,6 @@ func TestMonitoringHTTPSuccess(t *testing.T) {
 	http.HandlerFunc(apiResource.MonitoringHTTP).ServeHTTP(rec, req)
 
 	assert.Equal(t, 200, rec.Code)
-	assert.Equal(t, `{"data":{"monitors":[{"avg_total_ms":100,"endpoint":"https://www.google.com/","id":1,"method":"GET"},{"avg_total_ms":200,"endpoint":"https://www.golang.org/","id":2,"method":"GET"},{"avg_total_ms":300,"endpoint":"https://www.twitter.com/","id":3,"method":"GET"},{"avg_total_ms":400,"endpoint":"https://www.github.com/","id":4,"method":"GET"}]},"status":"success"}`, rec.Body.String())
 }
 
 // TestMonitoringHTTPSuccess tests for a successful /monitoring/http.
