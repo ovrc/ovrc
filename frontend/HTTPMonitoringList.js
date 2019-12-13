@@ -106,6 +106,7 @@ const HTTPMonitoringList = () => {
                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
               </th>
             </tr>
           </thead>
@@ -114,7 +115,10 @@ const HTTPMonitoringList = () => {
               return (
                 <tr key={monitor.id}>
                   <td>
-                    <b>{monitor.method}</b> {monitor.endpoint}
+                    <span className="tag is-primary is-light">
+                      <b>{monitor.method}</b>
+                    </span>{" "}
+                    {monitor.endpoint}
                   </td>
                   <td>{prettyMilliseconds(monitor.avg_total_ms)}</td>
                   <td>{prettyMilliseconds(monitor.min_total_ms)}</td>
@@ -157,7 +161,7 @@ const HTTPMonitoringList = () => {
                   </div>
                   <div className="field-body">
                     <div className="field">
-                      <p className="control">
+                      <div className="control">
                         <div className="select">
                           <select
                             onChange={e => updateMethod(e.target.value)}
@@ -168,7 +172,7 @@ const HTTPMonitoringList = () => {
                             <option value="GET">GET</option>
                           </select>
                         </div>
-                      </p>
+                      </div>
                     </div>
                   </div>
                 </div>

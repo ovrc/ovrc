@@ -51,7 +51,7 @@ func (api Resource) MonitoringHTTP(w http.ResponseWriter, r *http.Request) {
 
 	var entryList []map[string]interface{}
 	for _, row := range entries {
-		lastEntries, err := db.SelectLastXHTTPMonitorEntries(row.ID, 10)
+		lastEntries, err := db.SelectLastXHTTPMonitorEntries(row.ID, 20)
 
 		if err != nil {
 			jsend.Write(w,
