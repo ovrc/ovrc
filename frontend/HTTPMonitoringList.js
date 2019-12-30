@@ -60,40 +60,37 @@ const HTTPMonitoringList = () => {
     return "Loading...";
   }
 
-  if (loaded === false) {
-    return "No HTTP monitors found!";
-  }
+  return (
+    <div>
+      <div
+        className={
+          "notification is-primary " + (hideNotification ? "is-hidden" : null)
+        }
+      >
+        <button className="delete" onClick={handleNotification}></button>
+        New monitor added! Please wait for data to refresh...
+      </div>
 
-  if (monitors.length > 0) {
-    return (
-      <div>
-        <div
-          className={
-            "notification is-primary " + (hideNotification ? "is-hidden" : null)
-          }
+      <div className="buttons is-pulled-right	">
+        <button className="button is-primary" onClick={handleShowAddModal}>
+          Add
+        </button>
+      </div>
+      <div className="select">
+        <select
+          onChange={e => setPeriodSelectValue(e.target.value)}
+          value={periodSelectValue}
         >
-          <button className="delete" onClick={handleNotification}></button>
-          New monitor added! Please wait for data to refresh...
-        </div>
+          <option value="hour1">Last 1h</option>
+          <option value="hour3">Last 3h</option>
+          <option value="hour6">Last 6h</option>
+          <option value="hour12">Last 12h</option>
+          <option value="hour24">Last 24h</option>
+        </select>
+      </div>
+      <hr />
 
-        <div className="buttons is-pulled-right	">
-          <button className="button is-primary" onClick={handleShowAddModal}>
-            Add
-          </button>
-        </div>
-        <div className="select">
-          <select
-            onChange={e => setPeriodSelectValue(e.target.value)}
-            value={periodSelectValue}
-          >
-            <option value="hour1">Last 1h</option>
-            <option value="hour3">Last 3h</option>
-            <option value="hour6">Last 6h</option>
-            <option value="hour12">Last 12h</option>
-            <option value="hour24">Last 24h</option>
-          </select>
-        </div>
-        <hr />
+      {monitors.length > 0 ? (
         <table className="table">
           <thead>
             <tr>
@@ -134,88 +131,90 @@ const HTTPMonitoringList = () => {
             })}
           </tbody>
         </table>
-        <div
-          id="add_monitor"
-          className={"modal " + (showAddModal ? "is-active" : null)}
-        >
-          <div className="modal-background"></div>
-          <div className="modal-card">
-            <header className="modal-card-head">
-              <p className="modal-card-title">Add New Monitor</p>
-              <button
-                className="delete"
-                aria-label="close"
-                onClick={handleShowAddModal}
-              ></button>
-            </header>
-            <form
-              onSubmit={e => {
-                e.preventDefault();
-                addMonitor();
-              }}
-            >
-              <section className="modal-card-body">
-                <div className="field is-horizontal">
-                  <div className="field-label is-normal">
-                    <label className="label">Method</label>
-                  </div>
-                  <div className="field-body">
-                    <div className="field">
-                      <div className="control">
-                        <div className="select">
-                          <select
-                            onChange={e => updateMethod(e.target.value)}
-                            required
-                            value=""
-                          >
-                            <option disabled value=""></option>
-                            <option value="GET">GET</option>
-                          </select>
-                        </div>
+      ) : (
+        "No monitors found!"
+      )}
+      <div
+        id="add_monitor"
+        className={"modal " + (showAddModal ? "is-active" : null)}
+      >
+        <div className="modal-background"></div>
+        <div className="modal-card">
+          <header className="modal-card-head">
+            <p className="modal-card-title">Add New Monitor</p>
+            <button
+              className="delete"
+              aria-label="close"
+              onClick={handleShowAddModal}
+            ></button>
+          </header>
+          <form
+            onSubmit={e => {
+              e.preventDefault();
+              addMonitor();
+            }}
+          >
+            <section className="modal-card-body">
+              <div className="field is-horizontal">
+                <div className="field-label is-normal">
+                  <label className="label">Method</label>
+                </div>
+                <div className="field-body">
+                  <div className="field">
+                    <div className="control">
+                      <div className="select">
+                        <select
+                          onChange={e => updateMethod(e.target.value)}
+                          required
+                          value=""
+                        >
+                          <option disabled value=""></option>
+                          <option value="GET">GET</option>
+                        </select>
                       </div>
                     </div>
                   </div>
                 </div>
-                <div className="field is-horizontal">
-                  <div className="field-label is-normal">
-                    <label className="label">URL</label>
-                  </div>
-                  <div className="field-body">
-                    <div className="field">
-                      <p className="control">
-                        <input
-                          className="input"
-                          type="text"
-                          placeholder="https://www.google.com/"
-                          onChange={e => updateUrl(e.target.value)}
-                          required
-                          value={url}
-                        />
-                      </p>
-                    </div>
+              </div>
+              <div className="field is-horizontal">
+                <div className="field-label is-normal">
+                  <label className="label">URL</label>
+                </div>
+                <div className="field-body">
+                  <div className="field">
+                    <p className="control">
+                      <input
+                        className="input"
+                        type="text"
+                        placeholder="https://www.google.com/"
+                        onChange={e => updateUrl(e.target.value)}
+                        required
+                        value={url}
+                      />
+                    </p>
                   </div>
                 </div>
-              </section>
-              <footer className="modal-card-foot">
-                <button
-                  disabled={disableAddButton}
-                  className={
-                    "button is-success " +
-                    (disableAddButton ? "is-loading" : null)
-                  }
-                >
-                  Add Monitor
-                </button>
-                <button className="button" onClick={handleShowAddModal}>
-                  Cancel
-                </button>
-              </footer>
-            </form>
-          </div>
+              </div>
+            </section>
+            <footer className="modal-card-foot">
+              <button
+                disabled={disableAddButton}
+                className={
+                  "button is-success " +
+                  (disableAddButton ? "is-loading" : null)
+                }
+              >
+                Add Monitor
+              </button>
+              <button className="button" onClick={handleShowAddModal}>
+                Cancel
+              </button>
+            </footer>
+          </form>
         </div>
       </div>
-    );
-  }
+    </div>
+  );
 };
 
 export default HTTPMonitoringList;
