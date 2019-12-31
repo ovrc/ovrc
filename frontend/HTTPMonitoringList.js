@@ -19,14 +19,13 @@ const HTTPMonitoringList = () => {
 
   function updateMonitoringList() {
     setLoaded(false);
+    setMonitors([]);
     api_request("/monitoring/http", "GET", { period: periodSelectValue }).then(
       res => {
         if (res.status === "success") {
           setLoaded(true);
           if (res.data.monitors && res.data.monitors.length > 0) {
             setMonitors(res.data.monitors);
-          } else {
-            setMonitors([]);
           }
         }
       }
@@ -54,10 +53,6 @@ const HTTPMonitoringList = () => {
       updateUrl("");
       updateMethod("");
     });
-  }
-
-  if (loaded === false) {
-    return "Loading...";
   }
 
   return (
@@ -130,6 +125,8 @@ const HTTPMonitoringList = () => {
             })}
           </tbody>
         </table>
+      ) : loaded === false ? (
+        "Loading..."
       ) : (
         "No monitors found!"
       )}
