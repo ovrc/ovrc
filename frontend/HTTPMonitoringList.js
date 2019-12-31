@@ -5,7 +5,7 @@ import prettyMilliseconds from "pretty-ms";
 
 const HTTPMonitoringList = () => {
   const [monitors, setMonitors] = useState([]);
-  const [loaded, setLoaded] = useState(null);
+  const [loaded, setLoaded] = useState(false);
   const [showAddModal, setShowAddModal] = useState(false);
   const [disableAddButton, setDisableAddButton] = useState(false);
   const [method, updateMethod] = useState("");
@@ -18,15 +18,15 @@ const HTTPMonitoringList = () => {
   }, [periodSelectValue]);
 
   function updateMonitoringList() {
+    setLoaded(false);
     api_request("/monitoring/http", "GET", { period: periodSelectValue }).then(
       res => {
         if (res.status === "success") {
+          setLoaded(true);
           if (res.data.monitors && res.data.monitors.length > 0) {
             setMonitors(res.data.monitors);
-            setLoaded(true);
           } else {
-            // No results.
-            setLoaded(false);
+            setMonitors([]);
           }
         }
       }
@@ -56,7 +56,7 @@ const HTTPMonitoringList = () => {
     });
   }
 
-  if (loaded === null) {
+  if (loaded === false) {
     return "Loading...";
   }
 
@@ -89,7 +89,6 @@ const HTTPMonitoringList = () => {
         </select>
       </div>
       <hr />
-
       {monitors.length > 0 ? (
         <table className="table">
           <thead>
