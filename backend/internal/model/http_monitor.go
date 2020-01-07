@@ -45,3 +45,17 @@ func (db *DB) InsertHTTPMonitor(mon HTTPMonitor) (HTTPMonitor, error) {
 
 	return res, nil
 }
+
+// CountActiveHTTPMonitors returns the total active HTTP Monitors.
+func (db *DB) CountActiveHTTPMonitors() (int, error) {
+	count := 0
+	row := db.QueryRow(`SELECT count(*) FROM http_monitors`)
+
+	err := row.Scan(&count)
+
+	if err != nil {
+		return 0, err
+	}
+
+	return count, nil
+}

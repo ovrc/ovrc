@@ -20,6 +20,10 @@ func (api Resource) SetRoutes() http.Handler {
 		r.Get("/logout", api.AuthLogout)
 	})
 
+	r.Route("/dashboard", func(r chi.Router) {
+		r.Get("/tiles", api.DashboardTiles)
+	})
+
 	r.Route("/users", func(r chi.Router) {
 		r.Get("/me", api.UsersMe)
 		r.Get("/", api.Users)
